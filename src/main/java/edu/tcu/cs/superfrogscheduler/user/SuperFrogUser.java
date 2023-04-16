@@ -1,35 +1,74 @@
 package edu.tcu.cs.superfrogscheduler.user;
 
-import edu.tcu.cs.superfrogscheduler.user.user_details.UserDetails;
+import edu.tcu.cs.superfrogscheduler.user.security.UserSecurity;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
 
-
 @Entity
 public class SuperFrogUser implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "superFrogUser")
+    private UserSecurity userSecurity;
+
+    private String firstName;
+
+    private String lastName;
+
+    private String phoneNumber;
+
+    private String address;
+
+    @Column(nullable = false)
     private String email;
 
-    private String password;
-
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "user")
-    private UserDetails userDetails;
-
-    private boolean enabled;
+    private Boolean isInternationalStudent;
 
     public SuperFrogUser() {
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getId() {
         return id;
+    }
+
+    public void setId(String userDetailsId) {
+        this.id = userDetailsId;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getEmail() {
@@ -40,19 +79,19 @@ public class SuperFrogUser implements Serializable {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
+    public UserSecurity getUserSecurity() {
+        return userSecurity;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setUserSecurity(UserSecurity user) {
+        this.userSecurity = user;
     }
 
-    public UserDetails getUserDetails() {
-        return userDetails;
+    public Boolean getInternationalStudent() {
+        return this.isInternationalStudent;
     }
 
-    public void setUserDetails(UserDetails userDetail) {
-        this.userDetails = userDetail;
+    public void setInternationalStudent(Boolean internationalStudent) {
+        this.isInternationalStudent = internationalStudent;
     }
 }
