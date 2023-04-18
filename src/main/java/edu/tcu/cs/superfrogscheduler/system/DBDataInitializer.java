@@ -1,4 +1,5 @@
 package edu.tcu.cs.superfrogscheduler.system;
 
-public class DBInitializer {
+public class DBDataInitializer {
+
 }
