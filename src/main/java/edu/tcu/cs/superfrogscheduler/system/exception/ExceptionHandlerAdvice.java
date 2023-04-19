@@ -7,7 +7,6 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -19,10 +18,32 @@ import java.util.Map;
 @RestControllerAdvice
 public class ExceptionHandlerAdvice {
 
+
+    /**
+     * This handles already existed object when add new object.
+     *
+     * @param ex
+     * @return
+     */
+
     @ExceptionHandler(ObjectAlreadyExistedException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     Result handleObjectAlreadyExistedException(Exception ex) {
         return new Result(false, StatusCode.CONFLICT, ex.getMessage());
+    }
+
+
+    /**
+     * This handles object does not exist.
+     *
+     * @param ex
+     * @return
+     */
+
+    @ExceptionHandler(ObjectNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    Result handleObjectNotFoundException(Exception ex) {
+        return new Result(false, StatusCode.NOT_FOUND, ex.getMessage());
     }
 
 

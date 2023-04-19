@@ -12,6 +12,7 @@ public class UserSecurity implements Serializable {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    @Column(nullable = false, unique = true)
     private String email;
 
     private String password;

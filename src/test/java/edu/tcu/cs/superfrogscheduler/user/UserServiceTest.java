@@ -1,6 +1,7 @@
 package edu.tcu.cs.superfrogscheduler.user;
 
 import edu.tcu.cs.superfrogscheduler.system.exception.ObjectAlreadyExistedException;
+import edu.tcu.cs.superfrogscheduler.system.exception.ObjectNotFoundException;
 import edu.tcu.cs.superfrogscheduler.user.security.UserSecurity;
 import edu.tcu.cs.superfrogscheduler.user.security.UserSecurityRepository;
 import edu.tcu.cs.superfrogscheduler.user.security.UserSecurityService;
@@ -13,7 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -40,6 +41,8 @@ class UserServiceTest {
 
     SuperFrogUser superFrogUser;
 
+    List<SuperFrogUser> superFrogUsers;
+
     @BeforeEach
     void setUp() {
 
@@ -55,6 +58,19 @@ class UserServiceTest {
         superFrogUser.setAddress("TCU CS");
         superFrogUser.setUserSecurity(userSecurity);
         superFrogUser.setEmail("test@tcu.edu");
+
+        superFrogUsers = new ArrayList<>();
+        for (int i = 0; i < 50; i++) {
+            SuperFrogUser superFrogUser = new SuperFrogUser();
+            superFrogUser.setAddress("TCU CS" + i);
+            superFrogUser.setEmail("test" + i + "@tcu.edu");
+            superFrogUser.setFirstName("firstName");
+            superFrogUser.setLastName("lastName" + i);
+            UserSecurity.createUserSecurity(superFrogUser);
+
+            superFrogUsers.add(superFrogUser);
+        }
+        superFrogUsers.sort(Comparator.comparing(SuperFrogUser::getLastName));
 
     }
 
@@ -96,5 +112,37 @@ class UserServiceTest {
         // Then
         verify(this.userRepository, times(1)).findByEmail(Mockito.any(String.class));
         verify(this.userRepository, times(0)).save(superFrogUser);
+    }
+
+    @Test
+    void findStudentByIdSuccess() {
+        // Given
+        given(this.userRepository.findById("456")).willReturn(Optional.of(superFrogUser));
+
+        // When
+        SuperFrogUser foundSuperFrogUser = this.userService.findStudentById("456");
+
+        // Then
+        assertThat(foundSuperFrogUser.getId()).isEqualTo(superFrogUser.getId());
+        assertThat(foundSuperFrogUser.getFirstName()).isEqualTo(superFrogUser.getFirstName());
+        assertThat(foundSuperFrogUser.getLastName()).isEqualTo(superFrogUser.getLastName());
+        assertThat(foundSuperFrogUser.getPhoneNumber()).isEqualTo(superFrogUser.getPhoneNumber());
+        assertThat(foundSuperFrogUser.getAddress()).isEqualTo(superFrogUser.getAddress());
+        assertThat(foundSuperFrogUser.getEmail()).isEqualTo(superFrogUser.getEmail());
+
+        verify(this.userRepository, times(1)).findById("456");
+
+    }
+
+    @Test
+    void findStudentByIdNotFound() {
+        // Given
+        given(this.userRepository.findById(Mockito.any(String.class))).willReturn(Optional.empty());
+
+        // When
+        assertThrows(ObjectNotFoundException.class, () -> this.userService.findStudentById("456"));
+
+        // Then
+        verify(this.userRepository, times(1)).findById("456");
     }
 }

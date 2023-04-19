@@ -23,7 +23,7 @@ public class SuperFrogUser implements Serializable {
 
     private String address;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     private Boolean isInternationalStudent;

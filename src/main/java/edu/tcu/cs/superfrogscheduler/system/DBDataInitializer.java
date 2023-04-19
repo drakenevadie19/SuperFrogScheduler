@@ -7,6 +7,10 @@ import edu.tcu.cs.superfrogscheduler.user.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 @Component
 public class DBDataInitializer implements CommandLineRunner {
 
@@ -22,17 +26,29 @@ public class DBDataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        UserSecurity userSecurity = new UserSecurity();
-        SuperFrogUser superFrogUser = new SuperFrogUser();
+        // create 50 default users
+        List<SuperFrogUser> users = createUsers(50);
 
-        userSecurity.setEmail("test@tcu.edu");
-        userSecurity.setPassword("123456");
-        userSecurity.setUser(superFrogUser);
+        this.userRepository.saveAll(users);
+    }
 
-        superFrogUser.setAddress("TCU CS");
-        superFrogUser.setUserSecurity(userSecurity);
-        superFrogUser.setEmail("test@tcu.edu");
 
-        this.userRepository.save(superFrogUser);
+    private List<SuperFrogUser> createUsers(int totalUser) {
+        List<SuperFrogUser> users = new ArrayList<>();
+
+        for(int i = 0; i < totalUser; i++) {
+            SuperFrogUser superFrogUser = new SuperFrogUser();
+            superFrogUser.setAddress("TCU CS" + i);
+            superFrogUser.setEmail("test" + i + "@tcu.edu");
+            superFrogUser.setFirstName("firstName");
+            superFrogUser.setLastName("lastName" + i);
+            UserSecurity.createUserSecurity(superFrogUser);
+
+            users.add(superFrogUser);
+        }
+
+//        Collections.reverse(users);
+
+        return users;
     }
 }

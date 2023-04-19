@@ -1,12 +1,13 @@
 package edu.tcu.cs.superfrogscheduler.user;
 
 import edu.tcu.cs.superfrogscheduler.system.exception.ObjectAlreadyExistedException;
-import edu.tcu.cs.superfrogscheduler.user.security.UserSecurity;
+import edu.tcu.cs.superfrogscheduler.system.exception.ObjectNotFoundException;
 import edu.tcu.cs.superfrogscheduler.user.security.UserSecurityService;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @Service
 @Transactional
@@ -21,14 +22,20 @@ public class UserService {
         this.userSecurityService = userSecurityService;
     }
 
-    public List findAllStudents() {
-        return null;
+    public Page<SuperFrogUser> findAllStudents(SuperFrogUserSpecification superFrogUserSpecification, Pageable format) {
+        return this.userRepository.findAll(superFrogUserSpecification, format);
+    }
+
+    public SuperFrogUser findStudentById(String id) {
+        return this.userRepository
+                .findById(id)
+                .orElseThrow(() -> new ObjectNotFoundException("user", id));
     }
 
     public SuperFrogUser createUser(SuperFrogUser superFrogUser) {
 
         if(this.userRepository.findByEmail(superFrogUser.getEmail()).isPresent()) {
-            throw new ObjectAlreadyExistedException("User", superFrogUser.getEmail());
+            throw new ObjectAlreadyExistedException("user", superFrogUser.getEmail());
         }
         // createUserSecurity will also create 2-way connection between user and userSecurity
         this.userSecurityService.createUserSecurity(superFrogUser);
