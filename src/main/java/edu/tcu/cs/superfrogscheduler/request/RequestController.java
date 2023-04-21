@@ -41,14 +41,12 @@ public class RequestController {
         Request foundRequest = this.requestService.getRequestById(id);
         RequestDto requestDto = this.requestToRequestDtoConverter.convert(foundRequest);
         return new Result(true, StatusCode.SUCCESS, "Find One Success", requestDto);
-    } //Dto done, double check this
+    } //Dto done
 
-
-    // Working on implementing Dto below
 
 
     @PostMapping("/{id}/signup")
-    public Result signUpForRequest(@PathVariable Long id, @RequestBody String superFrogId){ //@RequestBody SuperFrog superFrog) {//SuperfrogDto superfrogDto) {
+    public Result signUpForRequest(@PathVariable Long id, @RequestBody String superFrogId){ //UC 22, SuperFrog Student signs up for an appearance
         // Authenticate the superfrog somehow
 
 
@@ -58,7 +56,7 @@ public class RequestController {
     }
 
     @DeleteMapping("/{id}/signup")
-    public Result cancelSignUpForRequest(@PathVariable Long id, @RequestBody String superFrogId){ //@RequestBody SuperFrog superFrog) {//SuperfrogDto superfrogDto) {
+    public Result cancelSignUpForRequest(@PathVariable Long id, @RequestBody String superFrogId){ //UC 23, SuperFrog Student cancels a signs up appearance
         // Authenticate the superfrog somehow
 
 
@@ -68,7 +66,7 @@ public class RequestController {
     }
 
     @PutMapping("/{id}/completed")
-    public Result markRequestAsCompleted(@PathVariable Long id, @RequestBody String superFrogId){ //@RequestBody SuperFrog superFrog) {//SuperfrogDto superfrogDto) {
+    public Result markRequestAsCompleted(@PathVariable Long id, @RequestBody String superFrogId){ //UC 24, SuperFrog Student marks an appearance as completed
         Request completedRequest = this.requestService.markRequestAsCompleted(id, superFrogId);
         RequestDto completedRequestDto = this.requestToRequestDtoConverter.convert(completedRequest);
         return new Result(true, StatusCode.SUCCESS, "Mark as Completed Success", completedRequestDto);
