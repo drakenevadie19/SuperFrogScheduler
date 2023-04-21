@@ -36,19 +36,19 @@ public class Request implements Serializable {
     public Request() {
     }
 
-    public Request(Long id, LocalDate eventDate, String eventTitle, String customerFirstName,
-                   String customerLastName, Integer customerPhoneNumber, String customerEmail,
-                   RequestStatus requestStatus, String assignedSuperFrogStudent) {
-        this.id = id;
-        this.eventDate = eventDate;
-        this.eventTitle = eventTitle;
-        this.customerFirstName = customerFirstName;
-        this.customerLastName = customerLastName;
-        this.customerPhoneNumber = customerPhoneNumber;
-        this.customerEmail = customerEmail;
-        this.requestStatus = requestStatus;
-        this.assignedSuperFrogStudent = assignedSuperFrogStudent;
-    }
+//    public Request(Long id, LocalDate eventDate, String eventTitle, String customerFirstName,
+//                   String customerLastName, Integer customerPhoneNumber, String customerEmail,
+//                   RequestStatus requestStatus, String assignedSuperFrogStudent) {
+//        this.id = id;
+//        this.eventDate = eventDate;
+//        this.eventTitle = eventTitle;
+//        this.customerFirstName = customerFirstName;
+//        this.customerLastName = customerLastName;
+//        this.customerPhoneNumber = customerPhoneNumber;
+//        this.customerEmail = customerEmail;
+//        this.requestStatus = requestStatus;
+//        this.assignedSuperFrogStudent = assignedSuperFrogStudent;
+//    }
 
     //This is what gets passed
 

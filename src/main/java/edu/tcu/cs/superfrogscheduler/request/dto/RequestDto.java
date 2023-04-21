@@ -1,4 +1,4 @@
-package edu.tcu.cs.superfrogscheduler.dto;
+package edu.tcu.cs.superfrogscheduler.request.dto;
 
 import edu.tcu.cs.superfrogscheduler.request.RequestStatus;
 import jakarta.validation.constraints.NotEmpty;
@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Objects;
 
+
+//Dto - simplified version of the data that is used for displaying in a web page
 public record RequestDto(
         Long id,
         @NotNull(message = "Event date is required.")

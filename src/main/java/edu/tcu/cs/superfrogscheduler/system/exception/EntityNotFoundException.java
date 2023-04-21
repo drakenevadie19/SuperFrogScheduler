@@ -8,5 +8,8 @@ public class EntityNotFoundException extends RuntimeException{
         super("Could not find "+message+" with "+x+": "+y+" :(");
     }
 
+    public EntityNotFoundException(Long requestId) {
+        super("Could not find Request with "+requestId+" :(");
+    }
 }
 
