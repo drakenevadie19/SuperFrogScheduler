@@ -1,5 +1,6 @@
-package edu.tcu.cs.superfrogscheduler.user;
+package edu.tcu.cs.superfrogscheduler.user.entity;
 
+import edu.tcu.cs.superfrogscheduler.user.entity.utils.PaymentPreference;
 import edu.tcu.cs.superfrogscheduler.user.security.UserSecurity;
 import jakarta.persistence.*;
 
@@ -27,6 +28,9 @@ public class SuperFrogUser implements Serializable {
     private String email;
 
     private Boolean isInternationalStudent;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentPreference paymentPreference;
 
     public SuperFrogUser() {
     }
@@ -87,11 +91,19 @@ public class SuperFrogUser implements Serializable {
         this.userSecurity = user;
     }
 
-    public Boolean getInternationalStudent() {
+    public Boolean getIsInternationalStudent() {
         return this.isInternationalStudent;
     }
 
-    public void setInternationalStudent(Boolean internationalStudent) {
+    public void setIsInternationalStudent(Boolean internationalStudent) {
         this.isInternationalStudent = internationalStudent;
+    }
+
+    public PaymentPreference getPaymentPreference() {
+        return paymentPreference;
+    }
+
+    public void setPaymentPreference(PaymentPreference paymentPreference) {
+        this.paymentPreference = paymentPreference;
     }
 }

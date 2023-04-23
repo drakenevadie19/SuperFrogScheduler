@@ -1,4 +1,4 @@
-package edu.tcu.cs.superfrogscheduler.system.util;
+package edu.tcu.cs.superfrogscheduler.system.utils;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;

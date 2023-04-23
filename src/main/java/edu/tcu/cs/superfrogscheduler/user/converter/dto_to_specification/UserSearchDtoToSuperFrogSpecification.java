@@ -1,6 +1,6 @@
-package edu.tcu.cs.superfrogscheduler.user.converter;
+package edu.tcu.cs.superfrogscheduler.user.converter.dto_to_specification;
 
-import edu.tcu.cs.superfrogscheduler.user.SuperFrogUserSpecification;
+import edu.tcu.cs.superfrogscheduler.user.entity.utils.SuperFrogUserSpecification;
 import edu.tcu.cs.superfrogscheduler.user.dto.UserSearchDto;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;

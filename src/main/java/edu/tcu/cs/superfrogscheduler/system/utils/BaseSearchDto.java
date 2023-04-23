@@ -1,4 +1,4 @@
-package edu.tcu.cs.superfrogscheduler.system.util;
+package edu.tcu.cs.superfrogscheduler.system.utils;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;

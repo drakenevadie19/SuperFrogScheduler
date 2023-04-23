@@ -1,5 +1,6 @@
-package edu.tcu.cs.superfrogscheduler.user;
+package edu.tcu.cs.superfrogscheduler.user.entity.utils;
 
+import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
 import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 

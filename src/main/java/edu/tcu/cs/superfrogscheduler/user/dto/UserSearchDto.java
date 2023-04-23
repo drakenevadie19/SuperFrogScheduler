@@ -1,6 +1,6 @@
 package edu.tcu.cs.superfrogscheduler.user.dto;
 
-import edu.tcu.cs.superfrogscheduler.system.util.BaseSearchDto;
+import edu.tcu.cs.superfrogscheduler.system.utils.BaseSearchDto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;

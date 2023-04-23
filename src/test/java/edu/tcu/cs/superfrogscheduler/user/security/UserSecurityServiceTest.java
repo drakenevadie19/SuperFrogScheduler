@@ -1,22 +1,16 @@
 package edu.tcu.cs.superfrogscheduler.user.security;
 
-import edu.tcu.cs.superfrogscheduler.user.SuperFrogUser;
-import edu.tcu.cs.superfrogscheduler.user.UserRepository;
-import edu.tcu.cs.superfrogscheduler.user.UserService;
+import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;

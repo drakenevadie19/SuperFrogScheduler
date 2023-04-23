@@ -2,6 +2,8 @@ package edu.tcu.cs.superfrogscheduler.user;
 
 import edu.tcu.cs.superfrogscheduler.system.exception.ObjectAlreadyExistedException;
 import edu.tcu.cs.superfrogscheduler.system.exception.ObjectNotFoundException;
+import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
+import edu.tcu.cs.superfrogscheduler.user.entity.utils.PaymentPreference;
 import edu.tcu.cs.superfrogscheduler.user.security.UserSecurity;
 import edu.tcu.cs.superfrogscheduler.user.security.UserSecurityRepository;
 import edu.tcu.cs.superfrogscheduler.user.security.UserSecurityService;
@@ -144,5 +146,84 @@ class UserServiceTest {
 
         // Then
         verify(this.userRepository, times(1)).findById("456");
+    }
+
+    @Test
+    void updateUserByIdSuccess() {
+        // Given
+        SuperFrogUser update = new SuperFrogUser();
+        update.setFirstName("firstNameUpdate");
+        update.setLastName("lastNameUpdate");
+        update.setAddress("123 Main St, Suite 100, Fort Worth, TX, 76109");
+        update.setPhoneNumber("(123) 123-1232");
+        update.setEmail("updateEmail@tcu.edu");
+        update.setIsInternationalStudent(true);
+        update.setPaymentPreference(PaymentPreference.MAIL_CHECK);
+
+        given(this.userRepository.findById("456")).willReturn(Optional.of(superFrogUser));
+        given(this.userRepository.findByEmail(update.getEmail())).willReturn(Optional.empty());
+        given(this.userRepository.save(superFrogUser)).willReturn(superFrogUser);
+
+        // When
+        SuperFrogUser updatedSuperFrogUser = this.userService.updateUserById(superFrogUser.getId(), update);
+
+        // Then
+        assertThat(updatedSuperFrogUser.getId()).isEqualTo(superFrogUser.getId());
+        assertThat(updatedSuperFrogUser.getFirstName()).isEqualTo(update.getFirstName());
+        assertThat(updatedSuperFrogUser.getLastName()).isEqualTo(update.getLastName());
+        assertThat(updatedSuperFrogUser.getAddress()).isEqualTo(update.getAddress());
+        assertThat(updatedSuperFrogUser.getPhoneNumber()).isEqualTo(update.getPhoneNumber());
+        assertThat(updatedSuperFrogUser.getEmail()).isEqualTo(update.getEmail());
+        assertThat(updatedSuperFrogUser.getIsInternationalStudent()).isEqualTo(update.getIsInternationalStudent());
+        assertThat(updatedSuperFrogUser.getPaymentPreference()).isEqualTo(update.getPaymentPreference());
+        assertThat(updatedSuperFrogUser.getUserSecurity().getEmail()).isEqualTo(update.getEmail());
+
+        verify(this.userRepository, times(1)).findById("456");
+        verify(this.userRepository, times(1)).findByEmail(update.getEmail());
+        verify(this.userRepository, times(1)).save(superFrogUser);
+
+    }
+
+    @Test
+    void updateUserByIdNotFound() {
+        // Given
+        SuperFrogUser update = new SuperFrogUser();
+        given(this.userRepository.findById("456")).willReturn(Optional.empty());
+
+        // When
+        assertThrows(ObjectNotFoundException.class, () -> this.userService.updateUserById("456", update));
+
+        // Then
+        verify(this.userRepository, times(1)).findById("456");
+        verify(this.userRepository, times(0)).findByEmail(update.getEmail());
+        verify(this.userRepository, times(0)).save(superFrogUser);
+    }
+
+    @Test
+    void updateUserByIdDuplicateEmail() {
+        // Given
+        SuperFrogUser update = new SuperFrogUser();
+        update.setFirstName("firstNameUpdate");
+        update.setLastName("lastNameUpdate");
+        update.setAddress("123 Main St, Suite 100, Fort Worth, TX, 76109");
+        update.setPhoneNumber("(123) 123-1232");
+        update.setEmail("randomEmaill@tcu.edu");
+        update.setIsInternationalStudent(true);
+        update.setPaymentPreference(PaymentPreference.MAIL_CHECK);
+
+        SuperFrogUser existed = new SuperFrogUser();
+        existed.setId("randomId");
+        existed.setEmail("randomEmail");
+
+        given(this.userRepository.findById("456")).willReturn(Optional.of(superFrogUser));
+        given(this.userRepository.findByEmail(Mockito.any())).willReturn(Optional.of(existed));
+
+        // When
+        assertThrows(ObjectAlreadyExistedException.class, () -> this.userService.updateUserById("456", update));
+
+        // Then
+        verify(this.userRepository, times(1)).findById("456");
+        verify(this.userRepository, times(1)).findByEmail(update.getEmail());
+        verify(this.userRepository, times(0)).save(superFrogUser);
     }
 }

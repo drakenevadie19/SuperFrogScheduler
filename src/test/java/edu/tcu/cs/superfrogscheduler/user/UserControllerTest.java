@@ -6,6 +6,9 @@ import edu.tcu.cs.superfrogscheduler.system.StatusCode;
 import edu.tcu.cs.superfrogscheduler.system.exception.ObjectAlreadyExistedException;
 import edu.tcu.cs.superfrogscheduler.system.exception.ObjectNotFoundException;
 import edu.tcu.cs.superfrogscheduler.user.dto.UserDto;
+import edu.tcu.cs.superfrogscheduler.user.dto.UserInfoDto;
+import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
+import edu.tcu.cs.superfrogscheduler.user.entity.utils.PaymentPreference;
 import edu.tcu.cs.superfrogscheduler.user.security.UserSecurity;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,10 +21,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 class UserControllerTest extends BaseControllerTests {
@@ -130,4 +133,98 @@ class UserControllerTest extends BaseControllerTests {
                 .andExpect(jsonPath("$.data").isEmpty());
 
     }
+
+    @Test
+    void updateStudentByIdSuccess() throws Exception {
+        // Given
+        UserInfoDto userInfoDto = new UserInfoDto();
+        userInfoDto.setFirstName("firstNameUpdate");
+        userInfoDto.setLastName("lastNameUpdate");
+        userInfoDto.setPhoneNumber("(123) 123-1232");
+        userInfoDto.setAddress("123 Main St, Suite 100, Fort Worth, TX, 76109");
+        userInfoDto.setEmail("updatedEmail@tcu.edu");
+        userInfoDto.setIsInternational(true);
+        userInfoDto.setPaymentPreference(PaymentPreference.MAIL_CHECK);
+
+        SuperFrogUser update = new SuperFrogUser();
+        update.setId("456");
+        update.setFirstName("firstNameUpdate");
+        update.setLastName("lastNameUpdate");
+        update.setAddress("123 Main St, Suite 100, Fort Worth, TX, 76109");
+        update.setPhoneNumber("(123) 123-1232");
+        update.setEmail("updateEmail@tcu.edu");
+        update.setIsInternationalStudent(true);
+        update.setPaymentPreference(PaymentPreference.MAIL_CHECK);
+
+        given(this.userService.updateUserById(eq("456"), Mockito.any(SuperFrogUser.class))).willReturn(update);
+        String json = this.objectMapper.writeValueAsString(userInfoDto);
+
+        // When and then
+        this.mockMvc.perform(put(this.baseUrl + "/users/456").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.flag").value(true))
+                .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+                .andExpect(jsonPath("$.message").value("Update Success"))
+                .andExpect(jsonPath("$.data.id").isNotEmpty())
+                .andExpect(jsonPath("$.data.firstName").value(update.getFirstName()))
+                .andExpect(jsonPath("$.data.lastName").value(update.getLastName()))
+                .andExpect(jsonPath("$.data.address").value(update.getAddress()))
+                .andExpect(jsonPath("$.data.phoneNumber").value(update.getPhoneNumber()))
+                .andExpect(jsonPath("$.data.email").value(update.getEmail()))
+                .andExpect(jsonPath("$.data.isInternational").value(update.getIsInternationalStudent()))
+                .andExpect(jsonPath("$.data.paymentPreference").isNotEmpty());
+
+    }
+
+    @Test
+    void updateStudentByIdNotFound() throws Exception {
+        // Given
+        UserInfoDto userInfoDto = new UserInfoDto();
+        userInfoDto.setFirstName("firstNameUpdate");
+        userInfoDto.setLastName("lastNameUpdate");
+        userInfoDto.setPhoneNumber("(123) 123-1232");
+        userInfoDto.setAddress("123 Main St, Suite 100, Fort Worth, TX, 76109");
+        userInfoDto.setEmail("updatedEmail@tcu.edu");
+        userInfoDto.setIsInternational(true);
+        userInfoDto.setPaymentPreference(PaymentPreference.MAIL_CHECK);
+
+        doThrow(new ObjectNotFoundException("user", "456"))
+                .when(this.userService)
+                .updateUserById(eq("456"), Mockito.any(SuperFrogUser.class));
+        String json = this.objectMapper.writeValueAsString(userInfoDto);
+
+        // When and then
+        this.mockMvc.perform(put(this.baseUrl + "/users/456").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.flag").value(false))
+                .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))
+                .andExpect(jsonPath("$.message").value("Could not find user with Id 456 :("))
+                .andExpect(jsonPath("$.data").isEmpty());
+
+    }
+
+    @Test
+    void updateStudentByIdDuplicatedEmail() throws Exception {
+        // Given
+        UserInfoDto userInfoDto = new UserInfoDto();
+        userInfoDto.setFirstName("firstNameUpdate");
+        userInfoDto.setLastName("lastNameUpdate");
+        userInfoDto.setPhoneNumber("(123) 123-1232");
+        userInfoDto.setAddress("123 Main St, Suite 100, Fort Worth, TX, 76109");
+        userInfoDto.setEmail("existed@tcu.edu");
+        userInfoDto.setIsInternational(true);
+        userInfoDto.setPaymentPreference(PaymentPreference.MAIL_CHECK);
+
+        doThrow(new ObjectAlreadyExistedException("user", "existed@tcu.edu"))
+                .when(this.userService)
+                .updateUserById(eq("456"), Mockito.any(SuperFrogUser.class));
+        String json = this.objectMapper.writeValueAsString(userInfoDto);
+
+        // When and then
+        this.mockMvc.perform(put(this.baseUrl + "/users/456").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.flag").value(false))
+                .andExpect(jsonPath("$.code").value(StatusCode.CONFLICT))
+                .andExpect(jsonPath("$.message").value("user existed@tcu.edu is already existed!"))
+                .andExpect(jsonPath("$.data").isEmpty());
+
+    }
+
 }
