@@ -39,7 +39,7 @@ public class RequestController {
     } //Dto done
 
 
-    //UC 6, Get list of appearance at id
+    //UC 7, Get a request appearance at id
     @GetMapping("/{id}")
     public Result getRequestById(@PathVariable("id") String id) {
         Request foundRequest = this.requestService.getRequestById(id);
@@ -58,7 +58,7 @@ public class RequestController {
         return new Result(true, StatusCode.SUCCESS, "Find by Status Success", requestDtos );
     }
 
-    //UC 4, update status
+    //UC 4, update request status
     @PutMapping("{id}/status")
     public Result updateRequestStatus(@PathVariable String id,@PathVariable RequestStatus status) {
         Request updatedRequest = this.requestService.updateStatus(id, status);
@@ -103,6 +103,7 @@ public class RequestController {
 
     }
 
+    //UC 5 add a request
     @PostMapping
     public Result addRequest(@Valid @RequestBody RequestDto requestDto) {
         Request newRequest = this.requestDtoToRequestConverter.convert(requestDto);
@@ -111,6 +112,7 @@ public class RequestController {
         return new Result(true, StatusCode.SUCCESS, "Add Success", savedRequestDto);
     }
 
+    //UC 8: edit request
     @PutMapping("/{id}")
     public Result updateRequest(@PathVariable String id, @Valid @RequestBody RequestDto requestDto) {
         Request updatedRequest = this.requestDtoToRequestConverter.convert(requestDto);
@@ -119,6 +121,7 @@ public class RequestController {
         return new Result(true, StatusCode.SUCCESS, "Update Success", savedRequestDto);
     }
 
+    //UC 12: delete a request
     @DeleteMapping("/{id}")
     public Result deleteRequest(@PathVariable String id) {
         this.requestService.delete(id);

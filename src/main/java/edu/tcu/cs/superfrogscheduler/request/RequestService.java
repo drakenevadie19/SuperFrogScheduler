@@ -31,6 +31,7 @@ public class RequestService {
         this.userRepository = userRepository;
     }
 
+    //UC 6 - view all requests
     public List<Request> getAllRequests() { //UC 6 - return a list of all Requests
         return requestRepository.findAll();
     }
@@ -53,7 +54,7 @@ public class RequestService {
 
 
 
-    //UC 6 - return a Request by id
+    //UC 7 - return a Request by id
     public Request getRequestById(String id) {
         return requestRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Request", id));
