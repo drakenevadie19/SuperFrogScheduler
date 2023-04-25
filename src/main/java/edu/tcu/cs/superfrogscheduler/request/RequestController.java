@@ -58,8 +58,6 @@ public class RequestController {
     @DeleteMapping("/{id}/signup")
     public Result cancelSignUpForRequest(@PathVariable Long id, @RequestBody String superFrogId){ //UC 23, SuperFrog Student cancels a signs up appearance
         // Authenticate the superfrog somehow
-
-
         Request canceledSignUpRequest = this.requestService.cancelSignupForRequest(id, superFrogId);
         RequestDto canceledSignUpRequestDto = this.requestToRequestDtoConverter.convert(canceledSignUpRequest);
         return new Result(true, StatusCode.SUCCESS, "Cancel Sign Up Success", canceledSignUpRequestDto);
