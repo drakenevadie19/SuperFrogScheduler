@@ -1,9 +1,14 @@
 package edu.tcu.cs.superfrogscheduler.request;
 
 import edu.tcu.cs.superfrogscheduler.system.exception.BadRequestException;
-import edu.tcu.cs.superfrogscheduler.system.exception.EntityNotFoundException;
+import edu.tcu.cs.superfrogscheduler.system.exception.ObjectAlreadyExistedException;
+import edu.tcu.cs.superfrogscheduler.system.exception.ObjectNotFoundException;
+import edu.tcu.cs.superfrogscheduler.user.UserRepository;
+import edu.tcu.cs.superfrogscheduler.user.UserService;
+import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
 import jakarta.transaction.Transactional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,17 +19,27 @@ public class RequestService {
 
     private final RequestRepository requestRepository;
 
-    public RequestService(RequestRepository requestRepository) {
+
+
+    private final UserService userService;
+
+    private final UserRepository userRepository;
+
+    public RequestService(RequestRepository requestRepository, UserService userService, UserRepository userRepository) {
         this.requestRepository = requestRepository;
+        this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     public List<Request> getAllRequests() { //UC 6 - return a list of all Requests
         return requestRepository.findAll();
     }
 
-    public Request getRequestById(Long id) { //UC 6 - return a Request by id
+
+    //UC 6 - return a Request by id
+    public Request getRequestById(String id) {
         return requestRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Request", "id", id));
+                .orElseThrow(() -> new ObjectNotFoundException("Request", id));
     }
 
     public Request save(Request newRequest){
@@ -37,10 +52,11 @@ public class RequestService {
     }
 
     //update, pass request, requestRepository.save(request)
-    public Request update(Long requestId, Request update){
+    public Request update(String requestId, Request update){
         return this.requestRepository.findById(requestId)
                 .map(oldRequest ->{
                     oldRequest.setEventDate(update.getEventDate());
+                    oldRequest.setEventDescription(update.getEventDescription());
                     oldRequest.setEventTitle(update.getEventTitle());
                     oldRequest.setCustomerFirstName(update.getCustomerFirstName());
                     oldRequest.setCustomerLastName(update.getCustomerLastName());
@@ -51,86 +67,95 @@ public class RequestService {
                     return this.requestRepository.save(oldRequest);
 
                 })
-                .orElseThrow(()-> new EntityNotFoundException(requestId));
+                .orElseThrow(()-> new ObjectNotFoundException("Request",requestId));
 
 
 
     }
-//    public Request updateRequest(Request request){
-//        return requestRepository.save(request);
-//    }
 
-    //delete, pass id, request Request = getReqById(id),   requestRepository.delete(request)
-    public void delete(long requestId){
+    //delete, pass id
+    public void delete(String requestId){
         this.requestRepository.findById(requestId)
-                .orElseThrow(() -> new EntityNotFoundException(requestId));
+                .orElseThrow(() -> new ObjectNotFoundException("Request",requestId));
         this.requestRepository.deleteById(requestId);
     }
 
-    public Request signupForRequest(Long requestId, String superFrogId){ //UC 22: allows SuperFrog students to sign up for a specific appearance request.
-        Request updateRequest = getRequestById(requestId); //grab the request @ id
+
+
+
+
+
+    //UC 22: allows SuperFrog students to sign up for a specific appearance request.
+    public Request signupForRequest(String requestId, String superFrogId){
+        Request request = getRequestById(requestId); //grab the request @ id
+
+
 
         //If request is not approved, cant accept
-        if(updateRequest.getRequestStatus()!= RequestStatus.APPROVED){
-            throw new BadRequestException("This Request has to be approved before Super Frog can sign up for it");
+        if(request.getRequestStatus()!= RequestStatus.APPROVED){
+            throw new ObjectNotFoundException("Request with Approval",requestId);
         }
 
         //if there's already a super frog signed up, cant accept
-        if(updateRequest.getAssignedSuperFrogStudent() != null){
-            throw new BadRequestException("This Request has a Super Frog already signed up for it");
+        if(request.getAssignedSuperFrogStudent() != null){
+            throw new ObjectNotFoundException("Superfrog", superFrogId);
         }
-
-        //grab SuperFrog
-        SuperFrog superFrog = this.superFrogService.getSuperFrogById(superFrogId);
 
         //assign the super frog to the request, then update
-        updateRequest.setAssignedSuperFrogStudent(superFrog.getId());
-        return update(requestId,updateRequest);//updateRequest(requestId);
+        request.setAssignedSuperFrogStudent(superFrogId);
+        request.setRequestStatus(RequestStatus.ASSIGNED);
+
+
+        return update(requestId,request);//updateRequest(requestId);
     }
 
-    public Request cancelSignupForRequest(Long requestId, String superFrogId){ //UC 23: allows SuperFrog students to cancel their sign-up for a specific appearance request.
-        Request updateRequest = getRequestById(requestId); //grab the request @ id
-
-        //grab SuperFrog
-        SuperFrog superFrog = this.superFrogService.getSuperFrogById(superFrogId);
 
 
-        //If request is not approved, cant cancel
-        if(updateRequest.getRequestStatus()!= RequestStatus.APPROVED){
-            throw new BadRequestException("This Request has to be approved before Super Frog can cancel it");
+
+
+    //UC 23: allows SuperFrog students to cancel their sign-up for a specific appearance request.
+    public Request cancelSignupForRequest(String requestId, String superFrogId){
+
+
+        Request updateRequest = getRequestById(requestId); // grab the request @ id
+
+
+
+        // check if assignedSuperFrogStudent field matches the passed superFrogId
+        if (updateRequest.getAssignedSuperFrogStudent().equals(superFrogId)) {
+            // set the assigned SuperFrog to null and update
+            updateRequest.setAssignedSuperFrogStudent(null);
+            updateRequest.setRequestStatus(RequestStatus.APPROVED);
+
+
+        }
+        else {
+            throw new ObjectAlreadyExistedException("Super Frog ",updateRequest.getAssignedSuperFrogStudent());//IllegalArgumentException("SuperFrog not assigned to this request.");
         }
 
-        //If this superfrog hasnt signed up for this request, cant cancel
-        if(!updateRequest.getAssignedSuperFrogStudent().equals(superFrog.getId())){
-            throw new BadRequestException("This Request hasn't been assigned to this student");
 
-        }
-
-
-
-        //set the assigned SuperFrog to null and update
-        updateRequest.setAssignedSuperFrogStudent(null);
         return update(requestId, updateRequest);
+        //set the assigned SuperFrog to null and update
+
     }
 
-    public Request markRequestAsCompleted(Long requestId, String superFrogId){ //UC 24: allows SuperFrog students to mark a specific appearance request as completed.
-        Request updateRequest = getRequestById(requestId); //grab the request @ id
-        SuperFrog superFrog = this.superFrogService.getSuperFrogById(superFrogId);
 
-        //If request is not approved, cant be completed
-        if(updateRequest.getRequestStatus()!= RequestStatus.APPROVED){
-            throw new BadRequestException("This Request has to be approved before Super Frog can complete it");
+
+    //UC 24: allows SuperFrog students to mark a specific appearance request as completed.
+    public Request markRequestAsCompleted(String requestId, String superFrogId){
+        Request request = getRequestById(requestId); //grab the request @ id
+
+        // check if assignedSuperFrogStudent field matches the passed superFrogId
+        if (request.getAssignedSuperFrogStudent().equals(superFrogId)) {
+            request.setRequestStatus(RequestStatus.COMPLETED);
         }
-
-        //If this superfrog hasnt signed up for this request, cant complete
-        if(!updateRequest.getAssignedSuperFrogStudent().equals(superFrog.getId())){
-            throw new BadRequestException("This Request hasn't been assigned to this student, cannot complete");
-
+        else {
+            throw new ObjectAlreadyExistedException("Super Frog ",request.getAssignedSuperFrogStudent());//IllegalArgumentException("SuperFrog not assigned to this request.");
         }
 
         //set request to completed and update the status.
-        updateRequest.setRequestStatus(RequestStatus.COMPLETED);
-        return update(requestId,updateRequest);
+
+        return update(requestId,request);
     }
     public viewallRequest.
 }
