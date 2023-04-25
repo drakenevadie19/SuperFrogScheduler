@@ -4,11 +4,11 @@ package edu.tcu.cs.superfrogscheduler.system.exception;
 public class EntityNotFoundException extends RuntimeException{
 
 
-    public EntityNotFoundException(String message, String x, long y) {
+    public EntityNotFoundException(String message, String x, String y) {
         super("Could not find "+message+" with "+x+": "+y+" :(");
     }
 
-    public EntityNotFoundException(Long requestId) {
+    public EntityNotFoundException(String requestId) {
         super("Could not find Request with "+requestId+" :(");
     }
 }

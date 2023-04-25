@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SuperfrogSchedulerApplication {
+public class SuperFrogSchedulerApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SuperfrogSchedulerApplication.class, args);
+        SpringApplication.run(SuperFrogSchedulerApplication.class, args);
     }
 
 }

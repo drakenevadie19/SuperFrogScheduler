@@ -11,19 +11,19 @@ public class RequestToRequestDtoConverter implements Converter<Request, RequestD
     @Override
     public RequestDto convert(Request source) {
         RequestDto requestDto = new RequestDto(
-                source.getId(),
-                source.getEventDate(),
+                source.getId().toString(),
+                source.getEventDate().toString(),
                 source.getEventTitle(),
                 source.getCustomerFirstName(),
                 source.getCustomerLastName(),
                 source.getCustomerPhoneNumber(),
                 source.getCustomerEmail(),
-                source.getRequestStatus(),
-                source.getAssignedSuperFrogStudent()
+                source.getAssignedSuperFrogStudent(),
+                source.getEventDescription(),
+                source.getRequestStatus()
         );
         return requestDto;
     }
 }
-
 
 

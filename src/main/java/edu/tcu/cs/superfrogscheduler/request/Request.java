@@ -13,18 +13,26 @@ import java.time.LocalDate;
 public class Request implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     private LocalDate eventDate; //YYYY-MM-DD
 
     private String eventTitle;
+    private String eventDescription;
+
+    public String getEventDescription() {
+        return eventDescription;
+    }
+
+    public void setEventDescription(String eventDescription) {
+        this.eventDescription = eventDescription;
+    }
 
     private String customerFirstName;
 
     private String customerLastName;
 
-    private Integer customerPhoneNumber;
+    private String customerPhoneNumber;
     private String customerEmail;
 
     private RequestStatus requestStatus; //ENUM
@@ -54,12 +62,12 @@ public class Request implements Serializable {
 
     // Getters and setters
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public String setId(String id) {
+        return this.id = id;
     }
 
     public LocalDate getEventDate() {
@@ -111,10 +119,10 @@ public class Request implements Serializable {
     }
 
 
-    public Integer getCustomerPhoneNumber() {
+    public String getCustomerPhoneNumber() {
         return customerPhoneNumber;
     }
-    public void setCustomerPhoneNumber(Integer customerPhoneNumber) {
+    public void setCustomerPhoneNumber(String customerPhoneNumber) {
         this.customerPhoneNumber= customerPhoneNumber;
     }
 
