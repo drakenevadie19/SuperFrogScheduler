@@ -391,6 +391,13 @@ class RequestServiceTest {
     }
 
 
+    @Test
+    void findByStatus() {
 
+    }
 
+    @Test
+    void updateStatus() {
+        
+    }
 }

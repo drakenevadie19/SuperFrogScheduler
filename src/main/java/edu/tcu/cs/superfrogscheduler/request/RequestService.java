@@ -35,6 +35,23 @@ public class RequestService {
         return requestRepository.findAll();
     }
 
+    //UC 6 - find by status
+    public List<Request> findByStatus(RequestStatus status){
+        return this.requestRepository.findByStatus(status);
+    }
+
+    //UC 4 - update status
+    public Request updateStatus(String id, RequestStatus status){
+        return this.requestRepository.findById(id).
+                map(oldRequest ->{
+                    oldRequest.setRequestStatus(status);
+                    return this.requestRepository.save(oldRequest);
+
+                })
+                .orElseThrow(()-> new ObjectNotFoundException("Request", id));
+             }
+
+
 
     //UC 6 - return a Request by id
     public Request getRequestById(String id) {
@@ -68,9 +85,6 @@ public class RequestService {
 
                 })
                 .orElseThrow(()-> new ObjectNotFoundException("Request",requestId));
-
-
-
     }
 
     //delete, pass id
@@ -79,9 +93,6 @@ public class RequestService {
                 .orElseThrow(() -> new ObjectNotFoundException("Request",requestId));
         this.requestRepository.deleteById(requestId);
     }
-
-
-
 
 
 
@@ -157,5 +168,5 @@ public class RequestService {
 
         return update(requestId,request);
     }
-    public viewallRequest.
+
 }

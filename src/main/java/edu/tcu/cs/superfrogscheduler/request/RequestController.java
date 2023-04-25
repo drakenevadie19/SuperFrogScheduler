@@ -47,6 +47,27 @@ public class RequestController {
         return new Result(true, StatusCode.SUCCESS, "Find One Success", requestDto);
     } //Dto done
 
+    //UC 6, get request by status
+    @GetMapping("/status")
+    public Result getRequestByStatus(@PathVariable RequestStatus status){
+        List<Request> foundRequest = this.requestService.findByStatus(status);
+        List<RequestDto>  requestDtos = foundRequest.stream()
+                .map(this.requestToRequestDtoConverter::convert)
+                .collect(Collectors.toList());
+
+        return new Result(true, StatusCode.SUCCESS, "Find by Status Success", requestDtos );
+    }
+
+    //UC 4, update status
+    @PutMapping("{id}/status")
+    public Result updateRequestStatus(@PathVariable String id,@PathVariable RequestStatus status) {
+        Request updatedRequest = this.requestService.updateStatus(id, status);
+        RequestDto updatedRequestDto = this.requestToRequestDtoConverter.convert(updatedRequest);
+        return new Result(true,  StatusCode.SUCCESS, "Update Status Success", updatedRequestDto);
+    }
+
+
+
 
 
 
@@ -103,5 +124,7 @@ public class RequestController {
         this.requestService.delete(id);
         return new Result(true, StatusCode.SUCCESS, "Delete Success");
     }
+
+
 
 }

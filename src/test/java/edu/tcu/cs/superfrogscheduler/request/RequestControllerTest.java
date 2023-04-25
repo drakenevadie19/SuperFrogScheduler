@@ -297,10 +297,11 @@ class RequestControllerTest {
     }
 
 
+    @Test
+    void getRequestByStatus() {
+    }
 
-
-
-
-
-
+    @Test
+    void updateRequestStatus() {
+    }
 }
