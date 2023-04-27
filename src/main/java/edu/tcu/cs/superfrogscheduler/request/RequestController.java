@@ -50,11 +50,14 @@ public class RequestController {
 
 
     //UC 4, update request status
-    @PutMapping("{id}")
+    @PutMapping("/{id}/status")
     public Result updateRequestStatus(@PathVariable String id,@PathVariable RequestStatus status) {
+
         Request updatedRequest = this.requestService.updateStatus(id, status);
         RequestDto updatedRequestDto = this.requestToRequestDtoConverter.convert(updatedRequest);
         return new Result(true,  StatusCode.SUCCESS, "Update Status Success", updatedRequestDto);
+
+
     }
 
 
@@ -77,8 +80,6 @@ public class RequestController {
         Request canceledSignUpRequest = this.requestService.cancelSignupForRequest(id, superFrogId);
         RequestDto canceledSignUpRequestDto = this.requestToRequestDtoConverter.convert(canceledSignUpRequest);
         return new Result(true, StatusCode.SUCCESS, "Cancel Sign Up Success", canceledSignUpRequestDto);
-
-
     }
 
     @PutMapping("/{id}/completed")
