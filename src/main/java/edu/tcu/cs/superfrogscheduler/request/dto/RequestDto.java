@@ -1,6 +1,8 @@
 package edu.tcu.cs.superfrogscheduler.request.dto;
 
 import edu.tcu.cs.superfrogscheduler.request.RequestStatus;
+import edu.tcu.cs.superfrogscheduler.user.dto.UserDto;
+import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
@@ -18,7 +20,7 @@ public record RequestDto(
         String customerPhoneNumber,
         @NotEmpty(message = "Customer email is required.")
         String customerEmail,
-        String assignedSuperFrogStudent,
+        UserDto assignedSuperFrogStudent,
         String eventDescription,
         RequestStatus status) {
 }

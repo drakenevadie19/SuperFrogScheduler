@@ -3,6 +3,7 @@ package edu.tcu.cs.superfrogscheduler.system;
 import edu.tcu.cs.superfrogscheduler.request.Request;
 import edu.tcu.cs.superfrogscheduler.request.RequestRepository;
 import edu.tcu.cs.superfrogscheduler.request.RequestStatus;
+import edu.tcu.cs.superfrogscheduler.user.UserService;
 import edu.tcu.cs.superfrogscheduler.user.security.UserSecurity;
 import edu.tcu.cs.superfrogscheduler.user.security.UserSecurityRepository;
 import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
@@ -38,6 +39,28 @@ public class DBDataInitializer implements CommandLineRunner {
 
         this.userRepository.saveAll(users);
         this.requestRepository.saveAll(requests);
+
+
+        SuperFrogUser superFrogUser = new SuperFrogUser();
+        superFrogUser.setFirstName("John");
+        superFrogUser.setLastName("Doe");
+        superFrogUser.setAddress("123 Main St.");
+        superFrogUser.setEmail("johndoe@example.com");
+        superFrogUser.setId("johndoe");
+
+
+        UserSecurity userSecurity = new UserSecurity();
+        userSecurity.setEmail("johndoe@example.com");
+        userSecurity.setPassword("password");
+        userSecurity.setRoles("user");
+        userSecurity.setUser(superFrogUser);
+
+        userSecurity.setUser(superFrogUser);
+        superFrogUser.setUserSecurity(userSecurity);
+        userRepository.save(superFrogUser);
+
+
+
     }
 
 
@@ -50,7 +73,10 @@ public class DBDataInitializer implements CommandLineRunner {
             superFrogUser.setEmail("test" + i + "@tcu.edu");
             superFrogUser.setFirstName("firstName");
             superFrogUser.setLastName("lastName" + i);
+
             UserSecurity.createUserSecurity(superFrogUser);
+
+
 
             users.add(superFrogUser);
         }

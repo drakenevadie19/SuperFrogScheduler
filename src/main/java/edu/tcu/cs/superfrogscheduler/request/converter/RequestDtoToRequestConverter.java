@@ -14,15 +14,15 @@ public class RequestDtoToRequestConverter implements Converter<RequestDto, Reque
     @Override
     public Request convert(RequestDto source) {
         Request request = new Request();
-        request.setId(String.valueOf(source.id()));
+        request.setId(source.id());
         request.setEventDate(LocalDate.parse(source.eventDate()));
-        request.setEventTitle(String.valueOf(source.eventTitle()));
+        request.setEventTitle(source.eventTitle());
         request.setCustomerFirstName(source.customerFirstName());
         request.setCustomerLastName(source.customerLastName());
         request.setCustomerPhoneNumber(source.customerPhoneNumber());
         request.setCustomerEmail(source.customerEmail());
-        request.setAssignedSuperFrogStudent(String.valueOf(source.assignedSuperFrogStudent()));
-        request.setEventDescription(String.valueOf(source.eventDescription()));
+        //request.setAssignedSuperFrogStudent(source.assignedSuperFrogStudent());//String.valueOf(source.assignedSuperFrogStudent().getId()));
+        request.setEventDescription(source.eventDescription());
         request.setRequestStatus(source.status());
 
         return request;

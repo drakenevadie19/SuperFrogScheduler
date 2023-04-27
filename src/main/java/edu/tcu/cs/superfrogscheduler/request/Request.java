@@ -1,9 +1,7 @@
 package edu.tcu.cs.superfrogscheduler.request;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -20,13 +18,6 @@ public class Request implements Serializable {
     private String eventTitle;
     private String eventDescription;
 
-    public String getEventDescription() {
-        return eventDescription;
-    }
-
-    public void setEventDescription(String eventDescription) {
-        this.eventDescription = eventDescription;
-    }
 
     private String customerFirstName;
 
@@ -37,7 +28,8 @@ public class Request implements Serializable {
 
     private RequestStatus requestStatus; //ENUM
 
-    private String assignedSuperFrogStudent;
+    @ManyToOne
+    private SuperFrogUser assignedSuperFrogStudent;
 
     // Constructors, getters, and setters
 
@@ -78,6 +70,15 @@ public class Request implements Serializable {
         this.eventDate = eventDate;
     }
 
+    public String getEventDescription() {
+        return eventDescription;
+    }
+
+    public void setEventDescription(String eventDescription) {
+        this.eventDescription = eventDescription;
+    }
+
+
     public String getEventTitle() {
         return eventTitle;
     }
@@ -110,12 +111,13 @@ public class Request implements Serializable {
         this.requestStatus = requestStatus;
     }
 
-    public String getAssignedSuperFrogStudent() {
+    public SuperFrogUser getAssignedSuperFrogStudent() {
+
         return assignedSuperFrogStudent;
     }
 
-    public void setAssignedSuperFrogStudent(String assignedSuperFrogStudent) {
-        this.assignedSuperFrogStudent = assignedSuperFrogStudent;
+    public SuperFrogUser setAssignedSuperFrogStudent(SuperFrogUser assignedSuperFrogStudent) {
+        return this.assignedSuperFrogStudent = assignedSuperFrogStudent;
     }
 
 
@@ -133,5 +135,7 @@ public class Request implements Serializable {
     public void setCustomerEmail(String customerEmail) {
         this.customerEmail = customerEmail;
     }
+
+
 }
 
