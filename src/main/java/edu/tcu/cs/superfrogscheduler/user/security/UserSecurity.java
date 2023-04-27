@@ -64,6 +64,7 @@ public class UserSecurity implements Serializable {
         UserSecurity userSecurity = new UserSecurity();
         userSecurity.setEmail(superFrogUser.getEmail());
         userSecurity.setUser(superFrogUser);
+        userSecurity.setEnabled(true);
 
         superFrogUser.setUserSecurity(userSecurity);
 
