@@ -1,14 +1,11 @@
 package edu.tcu.cs.superfrogscheduler.request;
 
-import edu.tcu.cs.superfrogscheduler.system.exception.BadRequestException;
 import edu.tcu.cs.superfrogscheduler.system.exception.ObjectAlreadyExistedException;
 import edu.tcu.cs.superfrogscheduler.system.exception.ObjectNotFoundException;
 import edu.tcu.cs.superfrogscheduler.user.UserRepository;
 import edu.tcu.cs.superfrogscheduler.user.UserService;
-import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
 import jakarta.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

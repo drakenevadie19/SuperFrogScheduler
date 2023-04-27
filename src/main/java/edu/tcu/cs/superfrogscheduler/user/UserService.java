@@ -1,16 +1,23 @@
 package edu.tcu.cs.superfrogscheduler.user;
 
+import edu.tcu.cs.superfrogscheduler.request.Request;
+import edu.tcu.cs.superfrogscheduler.request.RequestStatus;
+import edu.tcu.cs.superfrogscheduler.system.exception.DeactivateUserException;
 import edu.tcu.cs.superfrogscheduler.system.exception.ObjectAlreadyExistedException;
 import edu.tcu.cs.superfrogscheduler.system.exception.ObjectNotFoundException;
 import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
 import edu.tcu.cs.superfrogscheduler.user.entity.utils.SuperFrogUserSpecification;
+import edu.tcu.cs.superfrogscheduler.user.security.UserSecurity;
 import edu.tcu.cs.superfrogscheduler.user.security.UserSecurityService;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -26,11 +33,11 @@ public class UserService {
         this.userSecurityService = userSecurityService;
     }
 
-    public Page<SuperFrogUser> findAllStudents(SuperFrogUserSpecification superFrogUserSpecification, Pageable format) {
+    public Page<SuperFrogUser> findAllUsers(SuperFrogUserSpecification superFrogUserSpecification, Pageable format) {
         return this.userRepository.findAll(superFrogUserSpecification, format);
     }
 
-    public SuperFrogUser findStudentById(String id) {
+    public SuperFrogUser findUserById(String id) {
         return this.userRepository
                 .findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("user", id));
@@ -70,6 +77,33 @@ public class UserService {
         currentUser.getUserSecurity().setEmail(superFrogUser.getEmail());
 
         return this.userRepository.save(currentUser);
+    }
+
+    // NOTE: cannot deactivate if there are assigned (not incomplete yet) or complete (not paid yet) requests
+    // SO CANNOT DEACTIVATE if the status is either ASSIGNED or COMPLETED
+    public void deactivateUserById(String id) {
+        SuperFrogUser superFrogUser = this.findUserById(id);
+
+        Map<RequestStatus, Long> requestStatusMap = superFrogUser
+                .getRequests().stream()
+                .collect(Collectors.groupingBy(Request::getRequestStatus, Collectors.counting()));
+
+        Long totalAssignedRequests = requestStatusMap.get(RequestStatus.ASSIGNED);
+        Long totalCompletedRequests = requestStatusMap.get(RequestStatus.COMPLETED);
+
+        if(totalAssignedRequests != null || totalCompletedRequests != null) {
+            String error1 = totalAssignedRequests != null
+                    ? totalAssignedRequests + " incomplete assigned appearance"
+                    : "";
+
+            String error2 = totalCompletedRequests != null
+                    ? " and " + totalCompletedRequests + " not yet been submitted to payroll"
+                    : "";
+
+            throw new DeactivateUserException(error1 + error2);
+        }
+
+        this.userSecurityService.deactivateUser(superFrogUser.getUserSecurity());
     }
 
 }
