@@ -10,6 +10,4 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<SuperFrogUser, String>, JpaSpecificationExecutor<SuperFrogUser> {
     Optional<SuperFrogUser> findByEmail(String email);
-
-    Optional<SuperFrogUser> findById(String id);
 }
