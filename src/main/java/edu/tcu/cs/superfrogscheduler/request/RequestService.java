@@ -36,10 +36,6 @@ public class RequestService {
         return requestRepository.findAll();
     }
 
-    //UC 6 - find by status
-    public List<Request> findByStatus(RequestStatus status){
-        return this.requestRepository.findByStatus(status);
-    }
 
     //UC 4 - update status
     public Request updateStatus(String id, RequestStatus status){
@@ -50,7 +46,7 @@ public class RequestService {
 
                 })
                 .orElseThrow(()-> new ObjectNotFoundException("Request", id));
-             }
+    }
 
 
 
