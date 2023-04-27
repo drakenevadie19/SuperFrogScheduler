@@ -11,8 +11,13 @@ public class RequestToRequestDtoConverter implements Converter<Request, RequestD
     @Override
     public RequestDto convert(Request source) {
         RequestDto requestDto = new RequestDto(
-                source.getId().toString(),
+                source.getId(),
+                source.getEventType(),
+                source.getAddress(),
                 source.getEventDate().toString(),
+                source.getStartTime().toString(),
+                source.getEndTime().toString(),
+                source.getMileage().toString(),
                 source.getEventTitle(),
                 source.getCustomerFirstName(),
                 source.getCustomerLastName(),

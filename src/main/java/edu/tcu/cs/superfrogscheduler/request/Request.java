@@ -1,10 +1,12 @@
 package edu.tcu.cs.superfrogscheduler.request;
 
+import edu.tcu.cs.superfrogscheduler.reports.EventType;
 import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 
 @Entity
@@ -14,7 +16,17 @@ public class Request implements Serializable {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    public String address;
+
+    private EventType eventType;
+
     private LocalDate eventDate; //YYYY-MM-DD
+
+    private LocalTime startTime;
+
+    private LocalTime endTime;
+
+    private Double mileage;
 
     private String eventTitle;
     private String eventDescription;
@@ -46,7 +58,19 @@ public class Request implements Serializable {
     public Request() {
     }
 
-//    public Request(Long id, LocalDate eventDate, String eventTitle, String customerFirstName,
+    public Request(String id, EventType eventType, String address, Double mileage, LocalDate eventDate, LocalTime startTime, LocalTime endTime, RequestStatus requestStatus, String assignedSuperFrogStudent) {
+        this.id = id;
+        this.address = address;
+        this.eventType = eventType;
+        this.eventDate = eventDate;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.mileage = mileage;
+        this.requestStatus = requestStatus;
+        this.assignedSuperFrogStudent = assignedSuperFrogStudent;
+    }
+
+    //    public Request(Long id, LocalDate eventDate, String eventTitle, String customerFirstName,
 //                   String customerLastName, Integer customerPhoneNumber, String customerEmail,
 //                   RequestStatus requestStatus, String assignedSuperFrogStudent) {
 //        this.id = id;
@@ -66,6 +90,14 @@ public class Request implements Serializable {
 
     public String getId() {
         return id;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String setId(String id) {
@@ -135,6 +167,41 @@ public class Request implements Serializable {
     public void setCustomerEmail(String customerEmail) {
         this.customerEmail = customerEmail;
     }
+
+    public EventType getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(EventType eventType) {
+        this.eventType = eventType;
+    }
+
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public Double getMileage() {
+        return mileage;
+    }
+
+    public Double getMileageOver(Double freeMileage) {
+        return this.mileage.compareTo(freeMileage) <= 0 ? 0.0 : this.mileage - freeMileage;
+    }
+
+    public void setMileage(Double mileage) {
+        this.mileage = mileage;
 
     public SuperFrogUser getSuperFrogUser() {
         return superFrogUser;

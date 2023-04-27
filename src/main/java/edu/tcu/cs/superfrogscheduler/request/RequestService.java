@@ -16,8 +16,6 @@ public class RequestService {
 
     private final RequestRepository requestRepository;
 
-
-
     private final UserService userService;
 
     private final UserRepository userRepository;
@@ -33,6 +31,10 @@ public class RequestService {
         return requestRepository.findAll();
     }
 
+    //UC 6 - find by status
+    public List<Request> findByStatus(RequestStatus status){
+        return this.requestRepository.findByRequestStatus(status);
+    }
 
     //UC 4 - update status
     public Request updateStatus(String id, RequestStatus status){
