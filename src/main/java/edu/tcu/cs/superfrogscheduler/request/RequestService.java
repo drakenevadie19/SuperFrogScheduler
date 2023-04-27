@@ -1,14 +1,11 @@
 package edu.tcu.cs.superfrogscheduler.request;
 
-import edu.tcu.cs.superfrogscheduler.system.exception.BadRequestException;
 import edu.tcu.cs.superfrogscheduler.system.exception.ObjectAlreadyExistedException;
 import edu.tcu.cs.superfrogscheduler.system.exception.ObjectNotFoundException;
 import edu.tcu.cs.superfrogscheduler.user.UserRepository;
 import edu.tcu.cs.superfrogscheduler.user.UserService;
-import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
 import jakarta.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,7 +35,7 @@ public class RequestService {
 
     //UC 6 - find by status
     public List<Request> findByStatus(RequestStatus status){
-        return this.requestRepository.findByStatus(status);
+        return this.requestRepository.findByRequestStatus(status);
     }
 
     //UC 4 - update status

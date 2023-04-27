@@ -122,7 +122,7 @@ class UserServiceTest {
         given(this.userRepository.findById("456")).willReturn(Optional.of(superFrogUser));
 
         // When
-        SuperFrogUser foundSuperFrogUser = this.userService.findStudentById("456");
+        SuperFrogUser foundSuperFrogUser = this.userService.findUserById("456");
 
         // Then
         assertThat(foundSuperFrogUser.getId()).isEqualTo(superFrogUser.getId());
@@ -142,7 +142,7 @@ class UserServiceTest {
         given(this.userRepository.findById(Mockito.any(String.class))).willReturn(Optional.empty());
 
         // When
-        assertThrows(ObjectNotFoundException.class, () -> this.userService.findStudentById("456"));
+        assertThrows(ObjectNotFoundException.class, () -> this.userService.findUserById("456"));
 
         // Then
         verify(this.userRepository, times(1)).findById("456");

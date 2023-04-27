@@ -36,14 +36,14 @@ public class UserController {
     // UC 15: Spirit Director finds SuperFrog Students
     @GetMapping
     // UserSearchDto extends the BaseDto store params like sortDirection, sortBy, email, etc
-    public Result findAllStudents(@Valid UserSearchDto userSearchDto) {
+    public Result findAllUsers(@Valid UserSearchDto userSearchDto) {
         SuperFrogUserSpecification superFrogUserSpecification = converter.
                 toSuperFrogUserSpecification(userSearchDto);
 
         Pagination pagination = this.baseSearchDtoToPagination.convert(userSearchDto);
 
         Page<SuperFrogUser> superFrogUsers = this.userService
-                .findAllStudents(superFrogUserSpecification, pagination.format());
+                .findAllUsers(superFrogUserSpecification, pagination.format());
 
         List<UserDto> userDtos = superFrogUsers
                 .stream()
@@ -57,8 +57,8 @@ public class UserController {
 
     // UC 16: Spirit Director views a SuperFrog Student account
     @GetMapping("/{id}")
-    public Result findStudentById(@PathVariable String id) {
-        SuperFrogUser superFrogUser = this.userService.findStudentById(id);
+    public Result findUserById(@PathVariable String id) {
+        SuperFrogUser superFrogUser = this.userService.findUserById(id);
 
         UserWorkDetailsDto userWorkDetailsDto = this.converter.toUserWorkDetailsDto(superFrogUser);
 
@@ -80,7 +80,7 @@ public class UserController {
 
     // UC 20: SuperFrog Student edits profile information
     @PutMapping("/{id}")
-    public Result updateStudentById(@PathVariable String id, @Valid @RequestBody UserInfoDto userInfoDto) {;
+    public Result updateUserById(@PathVariable String id, @Valid @RequestBody UserInfoDto userInfoDto) {;
         SuperFrogUser superFrogUser = this.converter.toSuperFrogUser(userInfoDto);
 
         SuperFrogUser updatedUser = this.userService.updateUserById(id, superFrogUser);
@@ -88,5 +88,14 @@ public class UserController {
         UserInfoDto updatedUserInfoDto = this.converter.toUserInfoDto(updatedUser);
 
         return new Result(true, StatusCode.SUCCESS, "Update Success", updatedUserInfoDto);
+    }
+
+    // UC 14: Spirit Director deactivates the account of a SuperFrog Student
+    // NOTE: cannot deactivate if there are assigned (not incomplete yet) or complete (not paid yet) requests
+    @DeleteMapping("/{id}")
+    public Result deactivateUserById(@PathVariable String id) {
+        this.userService.deactivateUserById(id);
+
+        return new Result(true, StatusCode.SUCCESS, "Deactivate Success");
     }
 }

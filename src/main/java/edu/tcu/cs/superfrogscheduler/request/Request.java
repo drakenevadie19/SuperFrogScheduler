@@ -1,9 +1,7 @@
 package edu.tcu.cs.superfrogscheduler.request;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -13,6 +11,7 @@ import java.time.LocalDate;
 public class Request implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     private LocalDate eventDate; //YYYY-MM-DD
@@ -38,6 +37,9 @@ public class Request implements Serializable {
     private RequestStatus requestStatus; //ENUM
 
     private String assignedSuperFrogStudent;
+
+    @ManyToOne
+    private SuperFrogUser superFrogUser;
 
     // Constructors, getters, and setters
 
@@ -132,6 +134,14 @@ public class Request implements Serializable {
 
     public void setCustomerEmail(String customerEmail) {
         this.customerEmail = customerEmail;
+    }
+
+    public SuperFrogUser getSuperFrogUser() {
+        return superFrogUser;
+    }
+
+    public void setSuperFrogUser(SuperFrogUser superFrogUser) {
+        this.superFrogUser = superFrogUser;
     }
 }
 

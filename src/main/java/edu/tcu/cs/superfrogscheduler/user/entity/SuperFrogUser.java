@@ -1,10 +1,12 @@
 package edu.tcu.cs.superfrogscheduler.user.entity;
 
+import edu.tcu.cs.superfrogscheduler.request.Request;
 import edu.tcu.cs.superfrogscheduler.user.entity.utils.PaymentPreference;
 import edu.tcu.cs.superfrogscheduler.user.security.UserSecurity;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 public class SuperFrogUser implements Serializable {
@@ -15,6 +17,9 @@ public class SuperFrogUser implements Serializable {
 
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "superFrogUser")
     private UserSecurity userSecurity;
+
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "superFrogUser")
+    private List<Request> requests;
 
     private String firstName;
 
@@ -97,6 +102,14 @@ public class SuperFrogUser implements Serializable {
 
     public void setIsInternationalStudent(Boolean internationalStudent) {
         this.isInternationalStudent = internationalStudent;
+    }
+
+    public List<Request> getRequests() {
+        return requests;
+    }
+
+    public void setRequests(List<Request> requests) {
+        this.requests = requests;
     }
 
     public PaymentPreference getPaymentPreference() {

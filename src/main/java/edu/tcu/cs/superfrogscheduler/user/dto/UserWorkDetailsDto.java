@@ -1,5 +1,7 @@
 package edu.tcu.cs.superfrogscheduler.user.dto;
 
+import edu.tcu.cs.superfrogscheduler.request.dto.RequestDto;
+
 import java.util.List;
 
 public record UserWorkDetailsDto(
@@ -20,9 +22,9 @@ public record UserWorkDetailsDto(
 
         String personalSchedules,
 
-        List<?> signedUpAppearances,
+        List<RequestDto> signedUpAppearances,
 
-        List<?> completedAppearances
+        List<RequestDto> completedAppearances
 ) {
 
 }

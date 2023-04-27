@@ -106,7 +106,7 @@ class UserControllerTest extends BaseControllerTests {
     @Test
     void findStudentByIdSuccess() throws Exception {
         // Given
-        given(this.userService.findStudentById("test_id")).willReturn(superFrogUser);
+        given(this.userService.findUserById("test_id")).willReturn(superFrogUser);
 
         // When and then
         this.mockMvc.perform(get(this.baseUrl + "/users/test_id").accept(MediaType.APPLICATION_JSON))
@@ -123,7 +123,7 @@ class UserControllerTest extends BaseControllerTests {
     @Test
     void findStudentByIdNotFound() throws Exception {
         // Given
-        doThrow(new ObjectNotFoundException("user", "123")).when(this.userService).findStudentById("123");
+        doThrow(new ObjectNotFoundException("user", "123")).when(this.userService).findUserById("123");
 
         // When and Then
         this.mockMvc.perform(get(this.baseUrl + "/users/123").accept(MediaType.APPLICATION_JSON))
