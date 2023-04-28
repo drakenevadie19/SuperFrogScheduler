@@ -202,6 +202,7 @@ public class Request implements Serializable {
 
     public void setMileage(Double mileage) {
         this.mileage = mileage;
+    }
 
     public SuperFrogUser getSuperFrogUser() {
         return superFrogUser;
