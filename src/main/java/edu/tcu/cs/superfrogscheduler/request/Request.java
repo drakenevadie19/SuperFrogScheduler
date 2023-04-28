@@ -1,6 +1,6 @@
 package edu.tcu.cs.superfrogscheduler.request;
 
-import edu.tcu.cs.superfrogscheduler.reports.EventType;
+import edu.tcu.cs.superfrogscheduler.reports.dto.EventType;
 import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
 import jakarta.persistence.*;
 
@@ -58,7 +58,7 @@ public class Request implements Serializable {
     public Request() {
     }
 
-    public Request(String id, EventType eventType, String address, Double mileage, LocalDate eventDate, LocalTime startTime, LocalTime endTime, RequestStatus requestStatus, String assignedSuperFrogStudent) {
+    public Request(String id, EventType eventType, String address, Double mileage, LocalDate eventDate, LocalTime startTime, LocalTime endTime, RequestStatus requestStatus, SuperFrogUser superFrogStudent) {
         this.id = id;
         this.address = address;
         this.eventType = eventType;
@@ -67,7 +67,8 @@ public class Request implements Serializable {
         this.endTime = endTime;
         this.mileage = mileage;
         this.requestStatus = requestStatus;
-        this.assignedSuperFrogStudent = assignedSuperFrogStudent;
+        this.superFrogUser = superFrogStudent;
+        this.assignedSuperFrogStudent = superFrogStudent.getId();
     }
 
     //    public Request(Long id, LocalDate eventDate, String eventTitle, String customerFirstName,
@@ -202,6 +203,7 @@ public class Request implements Serializable {
 
     public void setMileage(Double mileage) {
         this.mileage = mileage;
+    }
 
     public SuperFrogUser getSuperFrogUser() {
         return superFrogUser;

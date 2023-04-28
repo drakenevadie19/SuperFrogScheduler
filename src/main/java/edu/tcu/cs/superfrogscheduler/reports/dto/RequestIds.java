@@ -1,7 +1,5 @@
 package edu.tcu.cs.superfrogscheduler.reports.dto;
 
-import edu.tcu.cs.superfrogscheduler.reports.Period;
-
 import java.util.List;
 
 /**
@@ -11,16 +9,16 @@ public class RequestIds {
 
     private List<String> requestIds;
 
-    private Period paymentPeriod;
+    private Period period;
 
 
     public RequestIds() {
 
     }
 
-    public RequestIds(List<String> requestIds, Period paymentPeriod) {
+    public RequestIds(List<String> requestIds, Period period) {
         this.requestIds = requestIds;
-        this.paymentPeriod = paymentPeriod;
+        this.period = period;
     }
 
     public List<String> getRequestIds() {
@@ -31,12 +29,11 @@ public class RequestIds {
         this.requestIds = requestIds;
     }
 
-    public Period getPaymentPeriod() {
-        return paymentPeriod;
+    public Period getPeriod() {
+        return period;
     }
 
-    public void setPaymentPeriod(Period paymentPeriod) {
-        this.paymentPeriod = paymentPeriod;
+    public void setPeriod(Period period) {
+        this.period = period;
     }
-
 }

@@ -1,8 +1,6 @@
 package edu.tcu.cs.superfrogscheduler.reports.dto;
 
 
-import edu.tcu.cs.superfrogscheduler.reports.Period;
-
 import java.math.BigDecimal;
 
 public record PaymentFormDto (

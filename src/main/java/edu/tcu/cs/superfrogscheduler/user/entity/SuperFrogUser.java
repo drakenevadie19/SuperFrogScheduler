@@ -1,10 +1,12 @@
 package edu.tcu.cs.superfrogscheduler.user.entity;
 
-import edu.tcu.cs.superfrogscheduler.reports.EventType;
-import edu.tcu.cs.superfrogscheduler.reports.PaymentForm;
-import edu.tcu.cs.superfrogscheduler.reports.Period;
-import edu.tcu.cs.superfrogscheduler.reports.TransportationFeeCalculator;
+import edu.tcu.cs.superfrogscheduler.reports.dto.EventType;
+import edu.tcu.cs.superfrogscheduler.reports.entity.PaymentForm;
+import edu.tcu.cs.superfrogscheduler.reports.dto.Period;
+import edu.tcu.cs.superfrogscheduler.reports.dto.TransportationFeeCalculator;
+import edu.tcu.cs.superfrogscheduler.reports.entity.PerformanceForm;
 import edu.tcu.cs.superfrogscheduler.request.Request;
+import edu.tcu.cs.superfrogscheduler.request.RequestStatus;
 import edu.tcu.cs.superfrogscheduler.user.entity.utils.PaymentPreference;
 import edu.tcu.cs.superfrogscheduler.user.security.UserSecurity;
 import jakarta.persistence.*;
@@ -14,6 +16,7 @@ import java.math.BigDecimal;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Entity
@@ -154,5 +157,19 @@ public class SuperFrogUser implements Serializable {
         BigDecimal totalAmount = totalAppearanceFee.add(transportationFee);
 
         return new PaymentForm(this.firstName, this.lastName, this.id, paymentPeriod, totalAmount);
+    }
+
+    public PerformanceForm generatePerformanceForm(List<Request> requests, Period period) {
+        AtomicReference<Integer> completedRequests = new AtomicReference<>(0);
+
+        requests.forEach(request -> {
+            if (request.getRequestStatus().equals(RequestStatus.COMPLETED)
+                    && request.getEventDate().compareTo(period.getEndDate()) <= 0
+                    && request.getEventDate().compareTo(period.getBeginDate()) >= 0
+            )
+                completedRequests.updateAndGet(v -> v + 1);
+        });
+
+        return new PerformanceForm(period, this.firstName, this.lastName, this.id, completedRequests.get());
     }
 }

@@ -1,17 +1,20 @@
-package edu.tcu.cs.superfrogscheduler.reports;
+package edu.tcu.cs.superfrogscheduler.reports.performance;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.tcu.cs.superfrogscheduler.reports.dto.EventType;
+import edu.tcu.cs.superfrogscheduler.reports.dto.Period;
 import edu.tcu.cs.superfrogscheduler.reports.dto.RequestIds;
+import edu.tcu.cs.superfrogscheduler.reports.entity.PaymentForm;
+import edu.tcu.cs.superfrogscheduler.reports.entity.PerformanceForm;
+import edu.tcu.cs.superfrogscheduler.reports.service.PaymentService;
+import edu.tcu.cs.superfrogscheduler.reports.service.PerformanceService;
 import edu.tcu.cs.superfrogscheduler.request.Request;
-import edu.tcu.cs.superfrogscheduler.request.RequestRepository;
 import edu.tcu.cs.superfrogscheduler.request.RequestStatus;
 import edu.tcu.cs.superfrogscheduler.system.StatusCode;
-import edu.tcu.cs.superfrogscheduler.user.UserRepository;
 import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -36,14 +39,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-@DisplayName("Integration tests for Payment APIs")
+@DisplayName("Integration tests for Performance APIs")
 @Tag("integration")
-public class PaymentControllerTest {
+public class PerformanceControllerTest {
     @Autowired
     MockMvc mockMvc;
 
     @MockBean
-    PaymentService paymentService;
+    PerformanceService performanceService;
 
     SuperFrogUser student1, student2, student3;
 
@@ -55,30 +58,30 @@ public class PaymentControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    List<PaymentForm> paymentForms;
+    List<PerformanceForm> performanceForms;
 
     @BeforeEach
     void setUp() {
         Period period1 = new Period(LocalDate.of(2023, 4, 1), LocalDate.of(2023, 4, 30));
-        PaymentForm paymentForm1 = new PaymentForm(
+        PerformanceForm performanceForm1 = new PerformanceForm(
+                period1,
                 "John",
                 "Doe",
                 "123",
-                period1,
-                BigDecimal.valueOf(900.75)
+                7
         );
 
         Period period2 = new Period(LocalDate.of(2023, 2, 1), LocalDate.of(2023, 2, 28));
-        PaymentForm paymentForm2 = new PaymentForm(
-                "Susan",
-                "Doe",
-                "124",
+        PerformanceForm performanceForm2 = new PerformanceForm(
                 period2,
-                BigDecimal.valueOf(900.75)
+                "Hanna",
+                "Sigman",
+                "124",
+                3
         );
-        this.paymentForms = new ArrayList<>();
-        this.paymentForms.add(paymentForm1);
-        this.paymentForms.add(paymentForm2);
+        this.performanceForms = new ArrayList<>();
+        this.performanceForms.add(performanceForm1);
+        this.performanceForms.add(performanceForm2);
 
         student1 = new SuperFrogUser("Jane", "Smith", "1001");
         student2 = new SuperFrogUser("John", "Doe", "1004");
@@ -93,7 +96,7 @@ public class PaymentControllerTest {
                 LocalTime.of(13, 0),
                 LocalTime.of(15, 30),
                 RequestStatus.COMPLETED,
-                student1.getId());
+                student1);
         request2 = new Request(
                 "6",
                 EventType.NONPROFIT,
@@ -103,7 +106,7 @@ public class PaymentControllerTest {
                 LocalTime.of(9, 0),
                 LocalTime.of(12, 0),
                 RequestStatus.COMPLETED,
-                student1.getId());
+                student1);
         request3 = new Request(
                 "12",
                 EventType.PRIVATE,
@@ -113,7 +116,7 @@ public class PaymentControllerTest {
                 LocalTime.of(19, 30),
                 LocalTime.of(21, 30),
                 RequestStatus.COMPLETED,
-                student1.getId());
+                student1);
         request4 = new Request(
                 "16",
                 EventType.PRIVATE,
@@ -123,7 +126,7 @@ public class PaymentControllerTest {
                 LocalTime.of(11, 0),
                 LocalTime.of(12, 0),
                 RequestStatus.COMPLETED,
-                student2.getId());
+                student2);
         request5 = new Request(
                 "17",
                 EventType.NONPROFIT,
@@ -133,7 +136,7 @@ public class PaymentControllerTest {
                 LocalTime.of(14, 30),
                 LocalTime.of(15, 30),
                 RequestStatus.COMPLETED,
-                student2.getId());
+                student2);
         request6 = new Request(
                 "20",
                 EventType.PRIVATE,
@@ -143,7 +146,7 @@ public class PaymentControllerTest {
                 LocalTime.of(9, 30),
                 LocalTime.of(14, 30),
                 RequestStatus.COMPLETED,
-                student2.getId());
+                student2);
         request7 = new Request(
                 "22",
                 EventType.TCU,
@@ -153,7 +156,7 @@ public class PaymentControllerTest {
                 LocalTime.of(17, 0),
                 LocalTime.of(19, 0),
                 RequestStatus.COMPLETED,
-                student3.getId());
+                student3);
     }
 
     @AfterEach
@@ -163,25 +166,25 @@ public class PaymentControllerTest {
     @Test
     void testGetAllRequestsSuccess() throws Exception {
         //given
-        given(this.paymentService.getAllPaymentForms()).willReturn(this.paymentForms);
+        given(this.performanceService.getAllPerformanceForms()).willReturn(this.performanceForms);
 
         //when and then
-        this.mockMvc.perform(get(this.baseUrl+"/payment-forms").accept(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(get(this.baseUrl+"/performance-forms").accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.flag").value(true))
                 .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
                 .andExpect(jsonPath("$.message").value("Find All Success"))
-                .andExpect(jsonPath("$.data", Matchers.hasSize(this.paymentForms.size())))
+                .andExpect(jsonPath("$.data", hasSize(this.performanceForms.size())))
                 .andExpect(jsonPath("$.data[0].studentId").value("123"))
                 .andExpect(jsonPath("$.data[0].firstName").value("John"))
                 .andExpect(jsonPath("$.data[1].studentId").value("124"))
-                .andExpect(jsonPath("$.data[1].firstName").value("Susan"));
+                .andExpect(jsonPath("$.data[1].firstName").value("Hanna"));
     }
 
-    /* won't work unless there are actually users and reports saved in the database
+    /* won't work unless there are actually users and reports saved in the database */
     @Test
-    public void should_generate_payments_form_for_SuperFrog_students() throws Exception {
+    public void should_generate_performance_forms_for_SuperFrog_students() throws Exception {
         // Given
-        List<String> selectedAppearanceRequestIds = List.of("5", "6", "12", "16", "17", "20", "22"); // Assume the Spirit Director has selected 7 completed requests for April.
+        List<String> selectedAppearanceRequestIds = List.of("1001", "1004", "1012"); // Assume the Spirit Director has selected 7 completed requests for April.
 
         Period paymentPeriod = new Period(LocalDate.of(2023, 4, 1), LocalDate.of(2023, 4, 30));
 
@@ -190,11 +193,10 @@ public class PaymentControllerTest {
         String json = this.objectMapper.writeValueAsString(requestIds);
 
         // When and then
-        this.mockMvc.perform(post("/api/v1/payment-forms").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(post("/api/v1/performance-forms").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.flag").value(true))
                 .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
-                .andExpect(jsonPath("$.message").value("Payment forms are generated successfully."))
+                .andExpect(jsonPath("$.message").value("Performance forms are generated successfully."))
                 .andExpect(jsonPath("$.data", hasSize(3)));
     }
-    */
 }

@@ -1,10 +1,8 @@
 package edu.tcu.cs.superfrogscheduler.request;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.tcu.cs.superfrogscheduler.reports.EventType;
+import edu.tcu.cs.superfrogscheduler.reports.dto.EventType;
 import edu.tcu.cs.superfrogscheduler.request.converter.RequestDtoToRequestConverter;
 import edu.tcu.cs.superfrogscheduler.request.converter.RequestToRequestDtoConverter;
-import edu.tcu.cs.superfrogscheduler.request.dto.RequestDto;
 import edu.tcu.cs.superfrogscheduler.system.StatusCode;
 import edu.tcu.cs.superfrogscheduler.system.exception.ObjectAlreadyExistedException;
 import edu.tcu.cs.superfrogscheduler.system.exception.ObjectNotFoundException;
@@ -13,7 +11,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -27,7 +24,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -137,7 +133,6 @@ class RequestControllerTest {
         //given
         given(this.requestService.getAllRequests()).willReturn(this.requests);
 
-
         //when and then
         this.mockMvc.perform(get(this.baseUrl+"/requests").accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.flag").value(true))
@@ -148,10 +143,6 @@ class RequestControllerTest {
                 .andExpect(jsonPath("$.data[0].eventTitle").value("Request 1"))
                 .andExpect(jsonPath("$.data[1].id").value("1002"))
                 .andExpect(jsonPath("$.data[1].eventTitle").value("Request 2"));
-
-
-
-
     }
 
     @Test
