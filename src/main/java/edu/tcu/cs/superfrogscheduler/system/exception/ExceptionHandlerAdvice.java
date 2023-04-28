@@ -1,6 +1,5 @@
 package edu.tcu.cs.superfrogscheduler.system.exception;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import edu.tcu.cs.superfrogscheduler.system.Result;
 import edu.tcu.cs.superfrogscheduler.system.StatusCode;
@@ -13,8 +12,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,10 +74,10 @@ public class ExceptionHandlerAdvice {
      * @return
      */
 
-    @ExceptionHandler(InvalidFormatException.class)
+    @ExceptionHandler(DeactivateUserException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Result handle(InvalidFormatException ex) {
-        return new Result(false, StatusCode.INVALID_ARGUMENT, ex.getCause().getMessage());
+    public Result handleDeactivateUserException(DeactivateUserException ex) {
+        return new Result(false, StatusCode.INVALID_ARGUMENT, ex.getMessage());
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -99,6 +96,19 @@ public class ExceptionHandlerAdvice {
         }
 
         return new Result(false, StatusCode.INVALID_ARGUMENT, "Request body is missing");
+    }
+
+    /**
+     * Fallback handles any unhandled exceptions.
+     *
+     * @param ex
+     * @return
+     */
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    Result handleOtherException(Exception ex) {
+        return new Result(false, StatusCode.INTERNAL_SERVER_ERROR, "A server internal error occurs.", ex.getMessage());
     }
 
 

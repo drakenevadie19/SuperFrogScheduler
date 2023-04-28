@@ -3,7 +3,11 @@ package edu.tcu.cs.superfrogscheduler.system;
 import edu.tcu.cs.superfrogscheduler.request.Request;
 import edu.tcu.cs.superfrogscheduler.request.RequestRepository;
 import edu.tcu.cs.superfrogscheduler.request.RequestStatus;
+
 import edu.tcu.cs.superfrogscheduler.user.UserService;
+
+import edu.tcu.cs.superfrogscheduler.user.entity.utils.PaymentPreference;
+
 import edu.tcu.cs.superfrogscheduler.user.security.UserSecurity;
 import edu.tcu.cs.superfrogscheduler.user.security.UserSecurityRepository;
 import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
@@ -61,6 +65,7 @@ public class DBDataInitializer implements CommandLineRunner {
 
 
 
+//        this.requestRepository.saveAll(requests);
     }
 
 
@@ -74,6 +79,9 @@ public class DBDataInitializer implements CommandLineRunner {
             superFrogUser.setFirstName("firstName");
             superFrogUser.setLastName("lastName" + i);
 
+            superFrogUser.setPaymentPreference(PaymentPreference.MAIL_CHECK);
+            superFrogUser.setRequests(createRequestsWithDifferentStatus());
+            superFrogUser.getRequests().forEach(request -> request.setSuperFrogUser(superFrogUser));
             UserSecurity.createUserSecurity(superFrogUser);
 
 
@@ -86,12 +94,69 @@ public class DBDataInitializer implements CommandLineRunner {
         return users;
     }
 
+    private List<Request> createRequestsWithDifferentStatus() {
+        List<Request> requests = new ArrayList<>();
+
+        Request request1 = new Request();
+        request1.setEventTitle("RequestPending");
+        request1.setRequestStatus(RequestStatus.PENDING);
+
+        Request request2 = new Request();
+        request2.setEventTitle("RequestApproved");
+        request2.setRequestStatus(RequestStatus.APPROVED);
+
+        Request request3 = new Request();
+        request3.setEventTitle("RequestRejected");
+        request3.setRequestStatus(RequestStatus.REJECTED);
+
+        Request request4 = new Request();
+        request4.setEventTitle("RequestCancelled");
+        request4.setRequestStatus(RequestStatus.CANCELLED);
+
+        Request request5 = new Request();
+        request5.setEventTitle("RequestCompleted");
+        request5.setRequestStatus(RequestStatus.COMPLETED);
+
+        Request request6 = new Request();
+        request6.setEventTitle("RequestIncomplete");
+        request6.setRequestStatus(RequestStatus.INCOMPLETE);
+
+        Request request7 = new Request();
+        request7.setEventTitle("RequestSubmitted");
+        request7.setRequestStatus(RequestStatus.SUBMITTED_TO_PAYROLL);
+
+        Request request8 = new Request();
+        request8.setEventTitle("RequestAssigned");
+        request8.setRequestStatus(RequestStatus.ASSIGNED);
+
+        requests.add(request1);
+        requests.add(request2);
+        requests.add(request3);
+        requests.add(request4);
+        requests.add(request5);
+        requests.add(request6);
+        requests.add(request7);
+        requests.add(request8);
+
+        for(int i = 0; i < requests.size(); i++) {
+            Request request = requests.get(i);
+            request.setEventTitle("Request "+i);
+            request.setEventDate(LocalDate.parse("2023-12-10"));
+            request.setEventDescription("Request "+i+" description");
+            request.setCustomerFirstName("Customer "+i);
+            request.setCustomerLastName("Lastname "+i);
+            request.setCustomerPhoneNumber("1231221234");
+            request.setCustomerEmail("Customer"+i+"lastname"+i+"@gmail.com");
+        }
+
+        return requests;
+    }
+
     private List<Request> createRequests(int totalRequests) {
         List<Request> requests = new ArrayList<>();
 
         for(int i = 0; i < totalRequests; i++) {
             Request request = new Request();
-            request.setId("100"+i);
             request.setEventTitle("Request "+i);
             request.setRequestStatus(RequestStatus.APPROVED);
             request.setEventDate(LocalDate.parse("2023-12-10"));

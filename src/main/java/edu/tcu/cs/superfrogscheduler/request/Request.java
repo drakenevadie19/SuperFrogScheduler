@@ -11,6 +11,7 @@ import java.time.LocalDate;
 public class Request implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     private LocalDate eventDate; //YYYY-MM-DD
@@ -31,24 +32,22 @@ public class Request implements Serializable {
     @ManyToOne
     private SuperFrogUser assignedSuperFrogStudent;
 
+    @ManyToOne
+    private SuperFrogUser superFrogUser;
+
+
+
+
+
+
+
+
+
     // Constructors, getters, and setters
 
     public Request() {
     }
 
-//    public Request(Long id, LocalDate eventDate, String eventTitle, String customerFirstName,
-//                   String customerLastName, Integer customerPhoneNumber, String customerEmail,
-//                   RequestStatus requestStatus, String assignedSuperFrogStudent) {
-//        this.id = id;
-//        this.eventDate = eventDate;
-//        this.eventTitle = eventTitle;
-//        this.customerFirstName = customerFirstName;
-//        this.customerLastName = customerLastName;
-//        this.customerPhoneNumber = customerPhoneNumber;
-//        this.customerEmail = customerEmail;
-//        this.requestStatus = requestStatus;
-//        this.assignedSuperFrogStudent = assignedSuperFrogStudent;
-//    }
 
     //This is what gets passed
 
@@ -136,6 +135,13 @@ public class Request implements Serializable {
         this.customerEmail = customerEmail;
     }
 
+    public SuperFrogUser getSuperFrogUser() {
+        return superFrogUser;
+    }
+
+    public void setSuperFrogUser(SuperFrogUser superFrogUser) {
+        this.superFrogUser = superFrogUser;
+    }
 
 }
 

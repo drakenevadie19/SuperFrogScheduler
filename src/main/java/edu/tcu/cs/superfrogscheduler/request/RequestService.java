@@ -7,7 +7,9 @@ import edu.tcu.cs.superfrogscheduler.user.UserRepository;
 import edu.tcu.cs.superfrogscheduler.user.UserService;
 import edu.tcu.cs.superfrogscheduler.user.converter.Converter;
 import edu.tcu.cs.superfrogscheduler.user.dto.UserDto;
+import edu.tcu.cs.superfrogscheduler.user.dto.UserWorkDetailsDto;
 import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
+
 import jakarta.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
@@ -41,10 +43,12 @@ public class RequestService {
         return requestRepository.findAll();
     }
 
+
     //UC 6 - find by status
     public List<Request> findByStatus(RequestStatus status){
         return this.requestRepository.findByRequestStatus(status); //changed from findByStatus to findByRequestStatus to match Request Entity (error)
     }
+
 
     //UC 4 - update status
     public Request updateStatus(String id, RequestStatus status){
@@ -55,7 +59,7 @@ public class RequestService {
 
                 })
                 .orElseThrow(()-> new ObjectNotFoundException("Request", id));
-             }
+    }
 
 
 
@@ -109,7 +113,7 @@ public class RequestService {
     public Request signupForRequest(String requestId, String superFrogId){
         Request request = getRequestById(requestId); //grab the request @ id
 
-        SuperFrogUser superFrogUser = this.userService.findStudentById(superFrogId);
+        SuperFrogUser superFrogUser = this.userService.findUserById(superFrogId);
 
         //If request is not approved, cant accept
         if(request.getRequestStatus()!= RequestStatus.APPROVED){
@@ -127,6 +131,11 @@ public class RequestService {
         request.setRequestStatus(RequestStatus.ASSIGNED);
 
         return requestRepository.save(request);
+
+
+
+
+
         //return update(requestId,request);//updateRequest(requestId);
     }
 
@@ -140,7 +149,7 @@ public class RequestService {
 
 
         Request updateRequest = getRequestById(requestId); // grab the request @ id
-        SuperFrogUser superFrogUser = this.userService.findStudentById(superFrogId);
+        SuperFrogUser superFrogUser = this.userService.findUserById(superFrogId);
 
 
 
@@ -149,6 +158,8 @@ public class RequestService {
             // set the assigned SuperFrog to null and update
             updateRequest.setAssignedSuperFrogStudent(null);
             updateRequest.setRequestStatus(RequestStatus.APPROVED);
+
+
 
 
 
@@ -169,7 +180,7 @@ public class RequestService {
     public Request markRequestAsCompleted(String requestId, String superFrogId){
         Request request = getRequestById(requestId); //grab the request @ id
 
-        SuperFrogUser superFrogUser = this.userService.findStudentById(superFrogId);
+        SuperFrogUser superFrogUser = this.userService.findUserById(superFrogId);
 
 
         // check if assignedSuperFrogStudent field matches the passed superFrogId

@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("${api.endpoint.base-url}/requests")
+@CrossOrigin(origins = "http://localhost:5173")
 public class RequestController {
 
 
@@ -56,31 +57,18 @@ public class RequestController {
         return new Result(true, StatusCode.SUCCESS, "Find One Success", requestDto);
     } //Dto done
 
-    //UC 6, get request by status
-    @GetMapping("/status")
-    public Result getRequestByStatus(@PathVariable RequestStatus status){
-        List<Request> foundRequest = this.requestService.findByStatus(status);
-        List<RequestDto>  requestDtos = foundRequest.stream()
-                .map(this.requestToRequestDtoConverter::convert)
-                .collect(Collectors.toList());
 
-        return new Result(true, StatusCode.SUCCESS, "Find by Status Success", requestDtos );
-    }
 
     //UC 4, update request status
-    @PutMapping("{id}/status")
+    @PutMapping("/{id}/status")
     public Result updateRequestStatus(@PathVariable String id,@PathVariable RequestStatus status) {
+
         Request updatedRequest = this.requestService.updateStatus(id, status);
         RequestDto updatedRequestDto = this.requestToRequestDtoConverter.convert(updatedRequest);
         return new Result(true,  StatusCode.SUCCESS, "Update Status Success", updatedRequestDto);
+
+
     }
-
-
-
-
-
-
-
 
 
     //UC 22, SuperFrog Student signs up for an appearance
@@ -96,48 +84,8 @@ public class RequestController {
     }
 
 
-//Works but throws error vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-//    @PostMapping("/{id}/signup")
-//    public Result signUpForRequest(@PathVariable String id, @RequestBody SuperFrogUser superFrogUser){
-//        // Authenticate the superfrog somehow
-//
-//
-//        Request signedUpRequest = this.requestService.signupForRequest(id, superFrogUser);
-//        RequestDto signedUpRequestDto = this.requestToRequestDtoConverter.convert(signedUpRequest);
-//        return new Result(true, StatusCode.SUCCESS, "Sign Up Success", signedUpRequestDto);
-//    }
-// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-//    @PutMapping("/{requestId}/signup/{superFrogId}") //was post
-//    public Result signUpForRequest(@PathVariable String requestId, @PathVariable String superFrogId){//SuperFrogUser superFrogUser){//
-//
-//        //SuperFrogUser superFrogUser = this.converter.toSuperFrogUser(userDto);
-//
-//        //SuperFrogUser superFrogUser = this.userDtoToSuperFrogUser.convert(userDto);
-//
-//        this.requestService.signupForRequest(requestId,superFrogId);
-////
-////        Request signedUpRequest = this.requestService.signupForRequest(superFrogId, requestId);//superFrogUser);
-////        RequestDto signedUpRequestDto = this.requestToRequestDtoConverter.convert(signedUpRequest);
-//        return new Result(true, StatusCode.SUCCESS, "Sign Up Success");//, signedUpRequestDto);
-//    }
 
 
-
-//    @PostMapping("/{id}/signup")
-//    public Result signUpForRequest(@PathVariable String id, @RequestBody UserDto userDto) {//SuperFrogUser superFrogUser){//
-//
-//        SuperFrogUser superFrogUser = this.converter.toSuperFrogUser(userDto);
-//
-//        //SuperFrogUser superFrogUser = this.userDtoToSuperFrogUser.convert(userDto);
-//
-//        Request signedUpRequest = this.requestService.signupForRequest(id, userDto);//superFrogUser);
-//        RequestDto signedUpRequestDto = this.requestToRequestDtoConverter.convert(signedUpRequest);
-//        return new Result(true, StatusCode.SUCCESS, "Sign Up Success", signedUpRequestDto);
-//    }
-
-
-    //WIP
     //UC 23, SuperFrog Student cancels a signs up appearance
     @DeleteMapping("/{requestId}/signup/{superFrogId}")
     //@PutMapping("/{requestId}/signup/{superFrogId}")
@@ -147,8 +95,6 @@ public class RequestController {
         Request canceledSignUpRequest = this.requestService.cancelSignupForRequest(requestId, superFrogId);
         RequestDto canceledSignUpRequestDto = this.requestToRequestDtoConverter.convert(canceledSignUpRequest);
         return new Result(true, StatusCode.SUCCESS, "Cancel Sign Up Success", canceledSignUpRequestDto);
-
-
     }
 
     @PutMapping("/{requestId}/completed/{superFrogId}")
