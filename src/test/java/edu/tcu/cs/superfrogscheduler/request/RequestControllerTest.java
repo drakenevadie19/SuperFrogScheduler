@@ -1,5 +1,6 @@
 package edu.tcu.cs.superfrogscheduler.request;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.tcu.cs.superfrogscheduler.reports.dto.EventType;
 import edu.tcu.cs.superfrogscheduler.request.converter.RequestDtoToRequestConverter;
 import edu.tcu.cs.superfrogscheduler.request.converter.RequestToRequestDtoConverter;
@@ -109,7 +110,7 @@ class RequestControllerTest {
         superFrog.setFirstName("Bob");
         superFrog.setLastName("Person");
 
-        request2.setAssignedSuperFrogStudent(superFrog);
+        request2.setAssignedSuperFrogStudent(superFrog.getId());
 
 
         this.requests.add(request1);
@@ -196,7 +197,7 @@ class RequestControllerTest {
         requestSignupSuccess.setCustomerPhoneNumber("1231221234");
         requestSignupSuccess.setCustomerEmail("bobmcdonald@gmail.com");
         requestSignupSuccess.setRequestStatus(RequestStatus.APPROVED);
-        requestSignupSuccess.setAssignedSuperFrogStudent(superFrog);
+        requestSignupSuccess.setAssignedSuperFrogStudent(superFrog.getId());
         //
 
 
@@ -227,7 +228,7 @@ class RequestControllerTest {
 
         // Check if the assignedSuperFrogStudent property is set correctly in the returned Request object
         Request updatedRequest = requestService.signupForRequest(requestId, superFrogId);
-        assertEquals(superFrogId, updatedRequest.getAssignedSuperFrogStudent().getId());
+        assertEquals(superFrogId, updatedRequest.getAssignedSuperFrogStudent());
     }
 
 
