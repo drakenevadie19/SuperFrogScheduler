@@ -1,5 +1,6 @@
-package edu.tcu.cs.superfrogscheduler.reports;
+package edu.tcu.cs.superfrogscheduler.reports.entity;
 
+import edu.tcu.cs.superfrogscheduler.reports.dto.Period;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;

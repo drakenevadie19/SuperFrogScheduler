@@ -1,5 +1,9 @@
 package edu.tcu.cs.superfrogscheduler.reports;
 
+import edu.tcu.cs.superfrogscheduler.reports.dto.EventType;
+import edu.tcu.cs.superfrogscheduler.reports.dto.Period;
+import edu.tcu.cs.superfrogscheduler.reports.entity.PaymentForm;
+import edu.tcu.cs.superfrogscheduler.reports.entity.PerformanceForm;
 import edu.tcu.cs.superfrogscheduler.request.Request;
 import edu.tcu.cs.superfrogscheduler.request.RequestStatus;
 import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
@@ -29,7 +33,7 @@ public class SuperFrogStudentTest {
                         LocalTime.of(13, 0),                  // Event's start time
                         LocalTime.of(15, 30),                 // Event's end time
                         RequestStatus.COMPLETED,                          // Event status
-                        student.getId()),                                        // The SuperFrog Student who signed up for the event
+                        student),                                        // The SuperFrog Student who signed up for the event
                 new Request(
                         "6",
                         EventType.NONPROFIT,
@@ -39,7 +43,7 @@ public class SuperFrogStudentTest {
                         LocalTime.of(9, 0),
                         LocalTime.of(12, 0),
                         RequestStatus.COMPLETED,
-                        student.getId()),
+                        student),
                 new Request(
                         "12",
                         EventType.PRIVATE,
@@ -49,7 +53,7 @@ public class SuperFrogStudentTest {
                         LocalTime.of(19, 30),
                         LocalTime.of(21, 30),
                         RequestStatus.COMPLETED,
-                        student.getId())
+                        student)
         );
 
         Period paymentPeriod = new Period(LocalDate.of(2023, 4, 1),
@@ -96,7 +100,7 @@ public class SuperFrogStudentTest {
                         LocalTime.of(13, 0),
                         LocalTime.of(15, 30),
                         RequestStatus.COMPLETED,
-                        student.getId()),
+                        student),
                 new Request(
                         "6",
                         EventType.PRIVATE,
@@ -106,7 +110,7 @@ public class SuperFrogStudentTest {
                         LocalTime.of(9, 0),
                         LocalTime.of(12, 0),
                         RequestStatus.COMPLETED,
-                        student.getId()),
+                        student),
                 new Request(
                         "12",
                         EventType.PRIVATE,
@@ -116,7 +120,7 @@ public class SuperFrogStudentTest {
                         LocalTime.of(19, 30),
                         LocalTime.of(21, 30),
                         RequestStatus.COMPLETED,
-                        student.getId())
+                        student)
         );
 
         Period paymentPeriod = new Period(LocalDate.of(2023, 4, 1),
@@ -133,6 +137,60 @@ public class SuperFrogStudentTest {
         assertThat(paymentForm.getPaymentPeriod().getBeginDate()).isEqualTo(paymentPeriod.getBeginDate());
         assertThat(paymentForm.getPaymentPeriod().getEndDate()).isEqualTo(paymentPeriod.getEndDate());
         assertThat(paymentForm.getAmount()).isEqualByComparingTo(new BigDecimal(1420.5));
+    }
+
+    @Test
+    public void should_generate_performance_form_for_one_SuperFrog_student() {
+        // Given
+        SuperFrogUser student = new SuperFrogUser("Jane", "Smith", "1001"); // First name, last name, and ID
+
+        List<Request> requests = List.of(
+                new Request(
+                        "5",
+                        EventType.PRIVATE,
+                        "Event address 1",
+                        50.0,
+                        LocalDate.of(2023, 4, 6),
+                        LocalTime.of(13, 0),
+                        LocalTime.of(15, 30),
+                        RequestStatus.COMPLETED,
+                        student),
+                new Request(
+                        "6",
+                        EventType.PRIVATE,
+                        "Event address 2",
+                        50.0,
+                        LocalDate.of(2023, 4, 9),
+                        LocalTime.of(9, 0),
+                        LocalTime.of(12, 0),
+                        RequestStatus.COMPLETED,
+                        student),
+                new Request(
+                        "12",
+                        EventType.PRIVATE,
+                        "Event address 3",
+                        50.0,
+                        LocalDate.of(2023, 4, 16),
+                        LocalTime.of(19, 30),
+                        LocalTime.of(21, 30),
+                        RequestStatus.COMPLETED,
+                        student)
+        );
+
+        Period period = new Period(LocalDate.of(2023, 4, 1),
+                LocalDate.of(2023, 4, 30));
+
+        // When
+        PerformanceForm performanceForm = student.generatePerformanceForm(requests, period);
+
+        // Then
+        assertThat(performanceForm).isNotNull();
+        assertThat(performanceForm.getFirstName()).isEqualTo(student.getFirstName());
+        assertThat(performanceForm.getLastName()).isEqualTo(student.getLastName());
+        assertThat(performanceForm.getStudentId()).isEqualTo(student.getId());
+        assertThat(performanceForm.getPerformancePeriod().getBeginDate()).isEqualTo(period.getBeginDate());
+        assertThat(performanceForm.getPerformancePeriod().getEndDate()).isEqualTo(period.getEndDate());
+        assertThat(performanceForm.getCompletedRequests()).isEqualByComparingTo(3);
     }
 
     @Test
@@ -159,6 +217,29 @@ public class SuperFrogStudentTest {
     }
 
     @Test
+    public void should_generate_performance_form_for_one_SuperFrog_student_with_zero_requests() {
+        // Given
+        SuperFrogUser student = new SuperFrogUser("Jane", "Smith", "1001"); // First name, last name, and ID
+
+        List<Request> requests = List.of();
+
+        Period period = new Period(LocalDate.of(2023, 4, 1),
+                LocalDate.of(2023, 4, 30));
+
+        // When
+        PerformanceForm performanceForm = student.generatePerformanceForm(requests, period);
+
+        // Then
+        assertThat(performanceForm).isNotNull();
+        assertThat(performanceForm.getFirstName()).isEqualTo(student.getFirstName());
+        assertThat(performanceForm.getLastName()).isEqualTo(student.getLastName());
+        assertThat(performanceForm.getStudentId()).isEqualTo(student.getId());
+        assertThat(performanceForm.getPerformancePeriod().getBeginDate()).isEqualTo(period.getBeginDate());
+        assertThat(performanceForm.getPerformancePeriod().getEndDate()).isEqualTo(period.getEndDate());
+        assertThat(performanceForm.getCompletedRequests()).isEqualByComparingTo(0);
+    }
+
+    @Test
     public void should_generate_payment_form_for_one_SuperFrog_student_no_transportation_fee() {
         // Given
         SuperFrogUser student = new SuperFrogUser("Jane", "Smith", "1001"); // First name, last name, and ID
@@ -173,7 +254,7 @@ public class SuperFrogStudentTest {
                         LocalTime.of(13, 0),
                         LocalTime.of(15, 30),
                         RequestStatus.COMPLETED,
-                        student.getId()),
+                        student),
                 new Request(
                         "6",
                         EventType.NONPROFIT,
@@ -183,7 +264,7 @@ public class SuperFrogStudentTest {
                         LocalTime.of(9, 0),
                         LocalTime.of(12, 0),
                         RequestStatus.COMPLETED,
-                        student.getId()),
+                        student),
                 new Request(
                         "12",
                         EventType.PRIVATE,
@@ -193,7 +274,7 @@ public class SuperFrogStudentTest {
                         LocalTime.of(19, 30),
                         LocalTime.of(21, 30),
                         RequestStatus.COMPLETED,
-                        student.getId())
+                        student)
         );
 
         Period paymentPeriod = new Period(LocalDate.of(2023, 4, 1),

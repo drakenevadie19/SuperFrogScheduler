@@ -1,4 +1,4 @@
-package edu.tcu.cs.superfrogscheduler.reports;
+package edu.tcu.cs.superfrogscheduler.reports.dto;
 
 import edu.tcu.cs.superfrogscheduler.request.Request;
 

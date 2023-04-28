@@ -1,6 +1,6 @@
 package edu.tcu.cs.superfrogscheduler.request.dto;
 
-import edu.tcu.cs.superfrogscheduler.reports.EventType;
+import edu.tcu.cs.superfrogscheduler.reports.dto.EventType;
 import edu.tcu.cs.superfrogscheduler.request.RequestStatus;
 import edu.tcu.cs.superfrogscheduler.user.dto.UserDto;
 import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;

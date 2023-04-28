@@ -1,16 +1,16 @@
-package edu.tcu.cs.superfrogscheduler.reports;
+package edu.tcu.cs.superfrogscheduler.reports.controller;
 
 import edu.tcu.cs.superfrogscheduler.reports.converter.PaymentFormDtoToPaymentFormConverter;
 import edu.tcu.cs.superfrogscheduler.reports.converter.PaymentFormToPaymentFormDtoConverter;
 import edu.tcu.cs.superfrogscheduler.reports.dto.PaymentFormDto;
+import edu.tcu.cs.superfrogscheduler.reports.dto.Period;
 import edu.tcu.cs.superfrogscheduler.reports.dto.RequestIds;
+import edu.tcu.cs.superfrogscheduler.reports.entity.PaymentForm;
+import edu.tcu.cs.superfrogscheduler.reports.service.PaymentService;
 import edu.tcu.cs.superfrogscheduler.system.Result;
 import edu.tcu.cs.superfrogscheduler.system.StatusCode;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,11 +46,14 @@ public class PaymentController {
 
         List<String> selectedIds = requestIds.getRequestIds();
 
-        Period paymentPeriod = requestIds.getPaymentPeriod();
+        Period paymentPeriod = requestIds.getPeriod();
 
         List<PaymentForm> paymentForms = this.paymentService.generatePaymentForms(selectedIds, paymentPeriod);
+        List<PaymentFormDto> paymentFormDtos = paymentForms.stream()
+                .map(this.paymentFormToPaymentFormDtoConverter::convert)
+                .collect(Collectors.toList());
 
-        return new Result(true, StatusCode.SUCCESS, "Payment forms are generated successfully.", paymentForms);
+        return new Result(true, StatusCode.SUCCESS, "Payment forms are generated successfully.", paymentFormDtos);
     }
 
 }

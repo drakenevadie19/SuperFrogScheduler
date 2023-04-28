@@ -1,6 +1,6 @@
 package edu.tcu.cs.superfrogscheduler.reports.converter;
 
-import edu.tcu.cs.superfrogscheduler.reports.PaymentForm;
+import edu.tcu.cs.superfrogscheduler.reports.entity.PaymentForm;
 import edu.tcu.cs.superfrogscheduler.reports.dto.PaymentFormDto;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;

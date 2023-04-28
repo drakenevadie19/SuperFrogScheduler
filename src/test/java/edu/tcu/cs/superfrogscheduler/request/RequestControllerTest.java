@@ -1,10 +1,9 @@
 package edu.tcu.cs.superfrogscheduler.request;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.tcu.cs.superfrogscheduler.reports.EventType;
+import edu.tcu.cs.superfrogscheduler.reports.dto.EventType;
 import edu.tcu.cs.superfrogscheduler.request.converter.RequestDtoToRequestConverter;
 import edu.tcu.cs.superfrogscheduler.request.converter.RequestToRequestDtoConverter;
-import edu.tcu.cs.superfrogscheduler.request.dto.RequestDto;
 import edu.tcu.cs.superfrogscheduler.system.StatusCode;
 import edu.tcu.cs.superfrogscheduler.system.exception.ObjectAlreadyExistedException;
 import edu.tcu.cs.superfrogscheduler.system.exception.ObjectNotFoundException;
@@ -16,7 +15,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -30,7 +28,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -113,7 +110,7 @@ class RequestControllerTest {
         superFrog.setFirstName("Bob");
         superFrog.setLastName("Person");
 
-        request2.setAssignedSuperFrogStudent(superFrog);
+        request2.setAssignedSuperFrogStudent(superFrog.getId());
 
 
         this.requests.add(request1);
@@ -158,7 +155,6 @@ class RequestControllerTest {
         //given
         given(this.requestService.getAllRequests()).willReturn(this.requests);
 
-
         //when and then
         this.mockMvc.perform(get(this.baseUrl+"/requests").accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.flag").value(true))
@@ -169,10 +165,6 @@ class RequestControllerTest {
                 .andExpect(jsonPath("$.data[0].eventTitle").value("Request 1"))
                 .andExpect(jsonPath("$.data[1].id").value("1002"))
                 .andExpect(jsonPath("$.data[1].eventTitle").value("Request 2"));
-
-
-
-
     }
 
     @Test
@@ -205,7 +197,7 @@ class RequestControllerTest {
         requestSignupSuccess.setCustomerPhoneNumber("1231221234");
         requestSignupSuccess.setCustomerEmail("bobmcdonald@gmail.com");
         requestSignupSuccess.setRequestStatus(RequestStatus.APPROVED);
-        requestSignupSuccess.setAssignedSuperFrogStudent(superFrog);
+        requestSignupSuccess.setAssignedSuperFrogStudent(superFrog.getId());
         //
 
 
@@ -236,7 +228,7 @@ class RequestControllerTest {
 
         // Check if the assignedSuperFrogStudent property is set correctly in the returned Request object
         Request updatedRequest = requestService.signupForRequest(requestId, superFrogId);
-        assertEquals(superFrogId, updatedRequest.getAssignedSuperFrogStudent().getId());
+        assertEquals(superFrogId, updatedRequest.getAssignedSuperFrogStudent());
     }
 
 

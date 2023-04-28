@@ -1,8 +1,12 @@
-package edu.tcu.cs.superfrogscheduler.reports;
+package edu.tcu.cs.superfrogscheduler.reports.service;
 
+import edu.tcu.cs.superfrogscheduler.reports.entity.PaymentForm;
+import edu.tcu.cs.superfrogscheduler.reports.dto.Period;
+import edu.tcu.cs.superfrogscheduler.reports.repository.PaymentFormRepository;
 import edu.tcu.cs.superfrogscheduler.request.Request;
 import edu.tcu.cs.superfrogscheduler.request.RequestRepository;
 import edu.tcu.cs.superfrogscheduler.user.UserService;
+import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,16 +16,12 @@ import java.util.stream.Collectors;
 @Service
 public class PaymentService {
 
-
-    private UserService userService;
-
     private RequestRepository requestRepository;
 
     private PaymentFormRepository paymentFormRepository;
 
 
-    public PaymentService(UserService userService, RequestRepository requestRepository, PaymentFormRepository paymentFormRepository) {
-        this.userService = userService;
+    public PaymentService(RequestRepository requestRepository, PaymentFormRepository paymentFormRepository) {
         this.requestRepository = requestRepository;
         this.paymentFormRepository = paymentFormRepository;
     }
@@ -33,11 +33,11 @@ public class PaymentService {
     public List<PaymentForm> generatePaymentForms(List<String> IdList, Period paymentPeriod) {
         List<Request> selectedRequests = this.requestRepository.findByIdIn(IdList);
 
-        Map<String, List<Request>> studentRequestsMap = groupRequestsBySuperFrogStudent(selectedRequests);
+        Map<SuperFrogUser, List<Request>> studentRequestsMap = groupRequestsBySuperFrogStudent(selectedRequests);
 
         // For each SuperFrogStudent, generate a payment form, and then collect the payment forms into a list.
         List<PaymentForm> paymentForms = studentRequestsMap.entrySet().stream()
-                .map(entry -> userService.findUserById(entry.getKey()).generatePaymentForm(entry.getValue(), paymentPeriod))// got error findStudentById no longer exists, was refactored to findUserById
+                .map(entry -> entry.getKey().generatePaymentForm(entry.getValue(), paymentPeriod))
                 .collect(Collectors.toList());
 
         // Persist the generated payment forms and then return them.
@@ -54,9 +54,9 @@ public class PaymentService {
      * @param selectedRequests A list of integer request ids.
      * @return A map that maps SuperFrogStudent to her requests
      */
-    private Map<String, List<Request>> groupRequestsBySuperFrogStudent(List<Request> selectedRequests) {
-        Map<String, List<Request>> studentRequestsMap = selectedRequests.stream()
-                .collect(Collectors.groupingBy(Request::getAssignedSuperFrogStudent));
+    private Map<SuperFrogUser, List<Request>> groupRequestsBySuperFrogStudent(List<Request> selectedRequests) {
+        Map<SuperFrogUser, List<Request>> studentRequestsMap = selectedRequests.stream()
+                .collect(Collectors.groupingBy(Request::getSuperFrogUser));
         return studentRequestsMap;
     }
 
