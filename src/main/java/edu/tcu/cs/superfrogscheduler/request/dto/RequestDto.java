@@ -2,6 +2,8 @@ package edu.tcu.cs.superfrogscheduler.request.dto;
 
 import edu.tcu.cs.superfrogscheduler.reports.EventType;
 import edu.tcu.cs.superfrogscheduler.request.RequestStatus;
+import edu.tcu.cs.superfrogscheduler.user.dto.UserDto;
+import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
@@ -14,8 +16,12 @@ public record RequestDto(
 
         String address,
         String eventDate,
+        @NotEmpty(message = "Start time required") //null time crashes
         String startTime,
+        @NotEmpty(message = "End time required") //null time crashes
         String endTime,
+
+        @NotEmpty(message = "Mileage required") //null mileage crashes
         String mileage,
         String eventTitle,
         @NotEmpty(message = "Customer first name is required.")
@@ -26,7 +32,7 @@ public record RequestDto(
         String customerPhoneNumber,
         @NotEmpty(message = "Customer email is required.")
         String customerEmail,
-        String assignedSuperFrogStudent,
+        UserDto assignedSuperFrogStudent,
         String eventDescription,
         RequestStatus status) {
 }

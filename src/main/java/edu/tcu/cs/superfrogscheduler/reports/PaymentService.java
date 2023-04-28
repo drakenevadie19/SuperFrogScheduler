@@ -37,7 +37,7 @@ public class PaymentService {
 
         // For each SuperFrogStudent, generate a payment form, and then collect the payment forms into a list.
         List<PaymentForm> paymentForms = studentRequestsMap.entrySet().stream()
-                .map(entry -> userService.findStudentById(entry.getKey()).generatePaymentForm(entry.getValue(), paymentPeriod))
+                .map(entry -> userService.findUserById(entry.getKey()).generatePaymentForm(entry.getValue(), paymentPeriod))// got error findStudentById no longer exists, was refactored to findUserById
                 .collect(Collectors.toList());
 
         // Persist the generated payment forms and then return them.

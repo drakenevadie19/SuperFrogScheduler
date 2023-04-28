@@ -3,7 +3,11 @@ package edu.tcu.cs.superfrogscheduler.system;
 import edu.tcu.cs.superfrogscheduler.request.Request;
 import edu.tcu.cs.superfrogscheduler.request.RequestRepository;
 import edu.tcu.cs.superfrogscheduler.request.RequestStatus;
+
+import edu.tcu.cs.superfrogscheduler.user.UserService;
+
 import edu.tcu.cs.superfrogscheduler.user.entity.utils.PaymentPreference;
+
 import edu.tcu.cs.superfrogscheduler.user.security.UserSecurity;
 import edu.tcu.cs.superfrogscheduler.user.security.UserSecurityRepository;
 import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
@@ -12,6 +16,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,9 +40,32 @@ public class DBDataInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
         // create 50 default users
         List<SuperFrogUser> users = createUsers(50);
-//        List<Request> requests = createRequests(50);
+        List<Request> requests = createRequests(50);
 
         this.userRepository.saveAll(users);
+        this.requestRepository.saveAll(requests);
+
+
+        SuperFrogUser superFrogUser = new SuperFrogUser();
+        superFrogUser.setFirstName("John");
+        superFrogUser.setLastName("Doe");
+        superFrogUser.setAddress("123 Main St.");
+        superFrogUser.setEmail("johndoe@example.com");
+        superFrogUser.setId("johndoe");
+
+
+        UserSecurity userSecurity = new UserSecurity();
+        userSecurity.setEmail("johndoe@example.com");
+        userSecurity.setPassword("password");
+        userSecurity.setRoles("user");
+        userSecurity.setUser(superFrogUser);
+
+        userSecurity.setUser(superFrogUser);
+        superFrogUser.setUserSecurity(userSecurity);
+        userRepository.save(superFrogUser);
+
+
+
 //        this.requestRepository.saveAll(requests);
     }
 
@@ -51,10 +79,13 @@ public class DBDataInitializer implements CommandLineRunner {
             superFrogUser.setEmail("test" + i + "@tcu.edu");
             superFrogUser.setFirstName("firstName");
             superFrogUser.setLastName("lastName" + i);
+
             superFrogUser.setPaymentPreference(PaymentPreference.MAIL_CHECK);
             superFrogUser.setRequests(createRequestsWithDifferentStatus());
             superFrogUser.getRequests().forEach(request -> request.setSuperFrogUser(superFrogUser));
             UserSecurity.createUserSecurity(superFrogUser);
+
+
 
             users.add(superFrogUser);
         }
@@ -70,34 +101,60 @@ public class DBDataInitializer implements CommandLineRunner {
         Request request1 = new Request();
         request1.setEventTitle("RequestPending");
         request1.setRequestStatus(RequestStatus.PENDING);
+        request1.setStartTime(LocalTime.NOON);
+        request1.setEndTime(LocalTime.MIDNIGHT);
+        request1.setMileage(10.00);
 
         Request request2 = new Request();
         request2.setEventTitle("RequestApproved");
         request2.setRequestStatus(RequestStatus.APPROVED);
+        request2.setStartTime(LocalTime.NOON);
+        request2.setEndTime(LocalTime.MIDNIGHT);
+        request2.setMileage(10.00);
+
 
         Request request3 = new Request();
         request3.setEventTitle("RequestRejected");
         request3.setRequestStatus(RequestStatus.REJECTED);
+        request3.setStartTime(LocalTime.NOON);
+        request3.setEndTime(LocalTime.MIDNIGHT);
+        request3.setMileage(10.00);
+
 
         Request request4 = new Request();
         request4.setEventTitle("RequestCancelled");
         request4.setRequestStatus(RequestStatus.CANCELLED);
+        request4.setStartTime(LocalTime.NOON);
+        request4.setEndTime(LocalTime.MIDNIGHT);
+        request4.setMileage(10.00);
 
         Request request5 = new Request();
         request5.setEventTitle("RequestCompleted");
         request5.setRequestStatus(RequestStatus.COMPLETED);
+        request5.setStartTime(LocalTime.NOON);
+        request5.setEndTime(LocalTime.MIDNIGHT);
+        request5.setMileage(10.00);
 
         Request request6 = new Request();
         request6.setEventTitle("RequestIncomplete");
         request6.setRequestStatus(RequestStatus.INCOMPLETE);
+        request6.setStartTime(LocalTime.NOON);
+        request6.setEndTime(LocalTime.MIDNIGHT);
+        request6.setMileage(10.00);
 
         Request request7 = new Request();
         request7.setEventTitle("RequestSubmitted");
         request7.setRequestStatus(RequestStatus.SUBMITTED_TO_PAYROLL);
+        request7.setStartTime(LocalTime.NOON);
+        request7.setEndTime(LocalTime.MIDNIGHT);
+        request7.setMileage(10.00);
 
         Request request8 = new Request();
         request8.setEventTitle("RequestAssigned");
         request8.setRequestStatus(RequestStatus.ASSIGNED);
+        request8.setStartTime(LocalTime.NOON);
+        request8.setEndTime(LocalTime.MIDNIGHT);
+        request8.setMileage(10.00);
 
         requests.add(request1);
         requests.add(request2);
@@ -112,11 +169,14 @@ public class DBDataInitializer implements CommandLineRunner {
             Request request = requests.get(i);
             request.setEventTitle("Request "+i);
             request.setEventDate(LocalDate.parse("2023-12-10"));
+            request.setStartTime(LocalTime.NOON);
+            request.setEndTime(LocalTime.MIDNIGHT);
             request.setEventDescription("Request "+i+" description");
             request.setCustomerFirstName("Customer "+i);
             request.setCustomerLastName("Lastname "+i);
             request.setCustomerPhoneNumber("1231221234");
             request.setCustomerEmail("Customer"+i+"lastname"+i+"@gmail.com");
+            request.setMileage(i + .01);
         }
 
         return requests;
@@ -135,6 +195,10 @@ public class DBDataInitializer implements CommandLineRunner {
             request.setCustomerLastName("Lastname "+i);
             request.setCustomerPhoneNumber("1231221234");
             request.setCustomerEmail("Customer"+i+"lastname"+i+"@gmail.com");
+            request.setStartTime(LocalTime.NOON);
+            request.setEndTime(LocalTime.MIDNIGHT);
+            request.setMileage(i + .01);
+
 
             requests.add(request);
         }
