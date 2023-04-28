@@ -43,11 +43,15 @@ public class RequestService {
         return requestRepository.findAll();
     }
 
-
     //UC 6 - find by status
     public List<Request> findByStatus(RequestStatus status){
-        return this.requestRepository.findByRequestStatus(status); //changed from findByStatus to findByRequestStatus to match Request Entity (error)
+        return this.requestRepository.findByRequestStatus(status);
     }
+
+    //UC 6 - find by status
+//   commented public List<Request> findByStatus(RequestStatus status){
+//        return this.requestRepository.findByRequestStatus(status); //changed from findByStatus to findByRequestStatus to match Request Entity (error)
+//    }
 
 
     //UC 4 - update status
@@ -85,6 +89,10 @@ public class RequestService {
                     oldRequest.setEventDate(update.getEventDate());
                     oldRequest.setEventDescription(update.getEventDescription());
                     oldRequest.setEventTitle(update.getEventTitle());
+                    oldRequest.setAddress(update.getAddress());
+                    oldRequest.setStartTime(update.getStartTime());
+                    oldRequest.setEndTime(update.getEndTime());
+                    oldRequest.setMileage(update.getMileage());
                     oldRequest.setCustomerFirstName(update.getCustomerFirstName());
                     oldRequest.setCustomerLastName(update.getCustomerLastName());
                     oldRequest.setRequestStatus(update.getRequestStatus());
@@ -126,7 +134,11 @@ public class RequestService {
         }
 
         //assign the super frog to the request, then update
-        request.setAssignedSuperFrogStudent(superFrogUser);
+        //I dont know if the String assignedSuperFrogStudent needs this?
+        request.setAssignedSuperFrogStudent(superFrogId);
+
+        //added, refactor
+        request.setSuperFrogUser(superFrogUser);
 
         request.setRequestStatus(RequestStatus.ASSIGNED);
 
@@ -157,6 +169,9 @@ public class RequestService {
         if (updateRequest.getAssignedSuperFrogStudent().equals(superFrogUser)) {
             // set the assigned SuperFrog to null and update
             updateRequest.setAssignedSuperFrogStudent(null);
+
+            //added, refactor
+            updateRequest.setSuperFrogUser(null);
             updateRequest.setRequestStatus(RequestStatus.APPROVED);
 
 
@@ -165,7 +180,7 @@ public class RequestService {
 
         }
         else {
-            throw new ObjectAlreadyExistedException("Super Frog ",updateRequest.getAssignedSuperFrogStudent().getId());
+            throw new ObjectAlreadyExistedException("Super Frog ",updateRequest.getSuperFrogUser().getId()); //changed from getAssignedSuperFrogUser.getId
         }
 
 
@@ -186,9 +201,11 @@ public class RequestService {
         // check if assignedSuperFrogStudent field matches the passed superFrogId
         if (request.getAssignedSuperFrogStudent().equals(superFrogUser)) {
             request.setRequestStatus(RequestStatus.COMPLETED);
+            //add this to super frogs completed appearances somehow
+
         }
         else {
-            throw new ObjectAlreadyExistedException("Super Frog ",request.getAssignedSuperFrogStudent().getId());
+            throw new ObjectAlreadyExistedException("Super Frog ",request.getSuperFrogUser().getId());//getAssignedSuperFrogStudent().getId());
         }
 
         //set request to completed and update the status.

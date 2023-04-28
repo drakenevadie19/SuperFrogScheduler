@@ -19,13 +19,18 @@ public class RequestToRequestDtoConverter implements Converter<Request, RequestD
     public RequestDto convert(Request source) {
         RequestDto requestDto = new RequestDto(
                 source.getId(),
+                source.getEventType(),
+                source.getAddress(),
                 source.getEventDate().toString(),
+                source.getStartTime().toString(),
+                source.getEndTime().toString(),
+                source.getMileage().toString(),
                 source.getEventTitle(),
                 source.getCustomerFirstName(),
                 source.getCustomerLastName(),
                 source.getCustomerPhoneNumber(),
                 source.getCustomerEmail(),
-                source.getAssignedSuperFrogStudent() != null ? this.superFrogUserToUserDto.convert(source.getAssignedSuperFrogStudent()):null,   //this.converter.toUserDto(source.getAssignedSuperFrogStudent()):null)
+                source.getAssignedSuperFrogStudent() != null ? this.superFrogUserToUserDto.convert(source.getSuperFrogUser()):null,   //this.converter.toUserDto(source.getAssignedSuperFrogStudent()):null)
                 source.getEventDescription(),
                 source.getRequestStatus()
         );

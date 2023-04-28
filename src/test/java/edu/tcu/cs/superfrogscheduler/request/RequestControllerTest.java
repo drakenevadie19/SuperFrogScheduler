@@ -1,6 +1,7 @@
 package edu.tcu.cs.superfrogscheduler.request;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.tcu.cs.superfrogscheduler.reports.EventType;
 import edu.tcu.cs.superfrogscheduler.request.converter.RequestDtoToRequestConverter;
 import edu.tcu.cs.superfrogscheduler.request.converter.RequestToRequestDtoConverter;
 import edu.tcu.cs.superfrogscheduler.request.dto.RequestDto;
@@ -26,6 +27,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -71,8 +73,12 @@ class RequestControllerTest {
         this.requests = new ArrayList<>();
         Request request1 = new Request();
         request1.setId("1001");
+        request1.setEventType(EventType.PRIVATE);
         request1.setEventTitle("Request 1");
         request1.setEventDate(LocalDate.parse("2023-12-12"));
+        request1.setStartTime(LocalTime.NOON);
+        request1.setEndTime(LocalTime.MIDNIGHT);
+        request1.setMileage(40.0);
         request1.setEventDescription("Request 1 description");
         request1.setCustomerFirstName("Bob");
         request1.setCustomerLastName("McDonald");
@@ -87,8 +93,12 @@ class RequestControllerTest {
 
         Request request2 = new Request();
         request2.setId("1002");
+        request2.setEventType(EventType.TCU);
         request2.setEventTitle("Request 2");
         request2.setEventDate(LocalDate.parse("2023-01-02"));
+        request2.setStartTime(LocalTime.NOON);
+        request2.setEndTime(LocalTime.MIDNIGHT);
+        request2.setMileage(25.0);
         request2.setEventDescription("Request 2 description");
         request2.setCustomerFirstName("Jeff");
         request2.setCustomerLastName("Whataburger");
@@ -183,8 +193,12 @@ class RequestControllerTest {
 
         Request requestSignupSuccess = new Request();
         requestSignupSuccess.setId("1001");
+        requestSignupSuccess.setEventType(EventType.PRIVATE);
         requestSignupSuccess.setEventTitle("Request 1");
         requestSignupSuccess.setEventDate(LocalDate.parse("2023-12-12"));
+        requestSignupSuccess.setStartTime(LocalTime.NOON);
+        requestSignupSuccess.setEndTime(LocalTime.MIDNIGHT);
+        requestSignupSuccess.setMileage(40.0);
         requestSignupSuccess.setEventDescription("Request 1 description");
         requestSignupSuccess.setCustomerFirstName("Bob");
         requestSignupSuccess.setCustomerLastName("McDonald");

@@ -1,12 +1,20 @@
 package edu.tcu.cs.superfrogscheduler.user.entity;
 
+import edu.tcu.cs.superfrogscheduler.reports.EventType;
+import edu.tcu.cs.superfrogscheduler.reports.PaymentForm;
+import edu.tcu.cs.superfrogscheduler.reports.Period;
+import edu.tcu.cs.superfrogscheduler.reports.TransportationFeeCalculator;
 import edu.tcu.cs.superfrogscheduler.request.Request;
 import edu.tcu.cs.superfrogscheduler.user.entity.utils.PaymentPreference;
 import edu.tcu.cs.superfrogscheduler.user.security.UserSecurity;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Entity
 public class SuperFrogUser implements Serializable {
@@ -38,6 +46,12 @@ public class SuperFrogUser implements Serializable {
     private PaymentPreference paymentPreference;
 
     public SuperFrogUser() {
+    }
+
+    public SuperFrogUser(String firstName, String lastName, String id) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
     public String getId() {
@@ -118,5 +132,27 @@ public class SuperFrogUser implements Serializable {
 
     public void setPaymentPreference(PaymentPreference paymentPreference) {
         this.paymentPreference = paymentPreference;
+    }
+
+    public PaymentForm generatePaymentForm(List<Request> requests, Period paymentPeriod) {
+        Map<EventType, Double> eventTypeHoursMap = requests.stream().collect(Collectors.groupingBy(request -> request.getEventType(),
+                Collectors.mapping(request -> request.getStartTime().until(request.getEndTime(), ChronoUnit.MINUTES) / 60.0,
+                        Collectors.reducing(0.0, Double::sum))));
+
+        BigDecimal totalAppearanceFee = new BigDecimal(0.0);
+
+        // Calculate the total appearance fee by going over the map.
+        for (Map.Entry<EventType, Double> entry : eventTypeHoursMap.entrySet()) {
+            totalAppearanceFee = totalAppearanceFee
+                    .add(BigDecimal.valueOf(entry.getKey().getHourlyRate())
+                            .multiply(BigDecimal.valueOf(entry.getValue())));
+        }
+
+        // We also need to consider transportation fee.
+        BigDecimal transportationFee = TransportationFeeCalculator.INSTANCE.calculateTransportationFee(requests);
+
+        BigDecimal totalAmount = totalAppearanceFee.add(transportationFee);
+
+        return new PaymentForm(this.firstName, this.lastName, this.id, paymentPeriod, totalAmount);
     }
 }
