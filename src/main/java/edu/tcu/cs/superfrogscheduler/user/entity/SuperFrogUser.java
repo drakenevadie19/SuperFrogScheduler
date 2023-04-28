@@ -12,6 +12,7 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,7 +28,7 @@ public class SuperFrogUser implements Serializable {
     private UserSecurity userSecurity;
 
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "superFrogUser")
-    private List<Request> requests;
+    private List<Request> requests = new ArrayList<>();
 
     private String firstName;
 
