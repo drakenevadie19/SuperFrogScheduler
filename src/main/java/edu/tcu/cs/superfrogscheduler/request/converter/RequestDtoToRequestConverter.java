@@ -1,7 +1,5 @@
 package edu.tcu.cs.superfrogscheduler.request.converter;
 
-import edu.tcu.cs.superfrogscheduler.reports.EventType;
-import edu.tcu.cs.superfrogscheduler.request.RequestStatus;
 import edu.tcu.cs.superfrogscheduler.request.dto.RequestDto;
 import edu.tcu.cs.superfrogscheduler.request.Request;
 import org.springframework.core.convert.converter.Converter;
