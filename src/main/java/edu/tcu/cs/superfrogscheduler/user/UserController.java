@@ -1,5 +1,6 @@
 package edu.tcu.cs.superfrogscheduler.user;
 
+import edu.tcu.cs.superfrogscheduler.security.auth.AuthService;
 import edu.tcu.cs.superfrogscheduler.system.utils.BaseSearchDtoToPagination;
 import edu.tcu.cs.superfrogscheduler.system.utils.Pagination;
 import edu.tcu.cs.superfrogscheduler.system.Result;
@@ -13,9 +14,12 @@ import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
 import edu.tcu.cs.superfrogscheduler.user.entity.utils.SuperFrogUserSpecification;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 
 @RestController
@@ -23,12 +27,15 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
+    private final AuthService authService;
+
     private final BaseSearchDtoToPagination baseSearchDtoToPagination;
 
     private final Converter converter;
 
-    public UserController(UserService userService, BaseSearchDtoToPagination baseSearchDtoToPagination, Converter converter) {
+    public UserController(UserService userService, AuthService authService, BaseSearchDtoToPagination baseSearchDtoToPagination, Converter converter) {
         this.userService = userService;
+        this.authService = authService;
         this.baseSearchDtoToPagination = baseSearchDtoToPagination;
         this.converter = converter;
     }
@@ -80,7 +87,12 @@ public class UserController {
 
     // UC 20: SuperFrog Student edits profile information
     @PutMapping("/{id}")
-    public Result updateUserById(@PathVariable String id, @Valid @RequestBody UserInfoDto userInfoDto) {;
+    public Result updateUserById(@PathVariable String id, @Valid @RequestBody UserInfoDto userInfoDto, Authentication authentication) {
+        // authentication.getName() will return the value in sub, which has been configured to use userId
+        // if userId not equals to the id that we want to update and not admin -> not the correct user
+        // admin is allowed
+        authService.validateUserOwner(authentication, id);
+
         SuperFrogUser superFrogUser = this.converter.toSuperFrogUser(userInfoDto);
 
         SuperFrogUser updatedUser = this.userService.updateUserById(id, superFrogUser);

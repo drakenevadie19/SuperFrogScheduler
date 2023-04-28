@@ -5,7 +5,6 @@ import edu.tcu.cs.superfrogscheduler.reports.dto.Period;
 import edu.tcu.cs.superfrogscheduler.reports.repository.PaymentFormRepository;
 import edu.tcu.cs.superfrogscheduler.request.Request;
 import edu.tcu.cs.superfrogscheduler.request.RequestRepository;
-import edu.tcu.cs.superfrogscheduler.user.UserService;
 import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
 import org.springframework.stereotype.Service;
 

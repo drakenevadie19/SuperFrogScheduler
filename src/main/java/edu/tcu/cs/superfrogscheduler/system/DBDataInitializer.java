@@ -16,6 +16,7 @@ import edu.tcu.cs.superfrogscheduler.user.security.UserSecurity;
 import edu.tcu.cs.superfrogscheduler.user.security.UserSecurityRepository;
 import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
 import edu.tcu.cs.superfrogscheduler.user.UserRepository;
+import edu.tcu.cs.superfrogscheduler.user.security.UserSecurityService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -31,47 +32,37 @@ public class DBDataInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
 
+    private final UserSecurityService userSecurityService;
+
     private final PerformanceFormRepository performanceFormRepository;
 
     private final RequestRepository requestRepository;
 
-    public DBDataInitializer(UserSecurityRepository userSecurityRepository, UserRepository userRepository, PerformanceFormRepository performanceFormRepository, RequestRepository requestRepository) {
+    public DBDataInitializer(UserSecurityRepository userSecurityRepository, UserRepository userRepository, UserSecurityService userSecurityService, RequestRepository requestRepository, PerformanceFormRepository performanceFormRepository) {
         this.userSecurityRepository = userSecurityRepository;
         this.userRepository = userRepository;
+        this.userSecurityService = userSecurityService;
         this.performanceFormRepository = performanceFormRepository;
         this.requestRepository = requestRepository;
     }
 
     @Override
     public void run(String... args) throws Exception {
+        SuperFrogUser admin = new SuperFrogUser();
+        admin.setAddress("adminAddress");
+        admin.setEmail("admin@tcu.edu");
+        admin.setFirstName("adminFirstName");
+        admin.setLastName("adminLastName");
+        admin.setPaymentPreference(PaymentPreference.MAIL_CHECK);
+        UserSecurity userSecurity = UserSecurity.createUserSecurity(admin);
+        this.userSecurityService.createBasicCredentials(userSecurity);
+        userSecurity.setRoles("user admin");
+        this.userRepository.save(admin);
+
         // create 50 default users
         List<SuperFrogUser> users = createUsers(50);
-        List<Request> requests = createRequests(50);
-
+//        List<Request> requests = createRequests(50);
         this.userRepository.saveAll(users);
-        this.requestRepository.saveAll(requests);
-
-
-        SuperFrogUser superFrogUser = new SuperFrogUser();
-        superFrogUser.setFirstName("John");
-        superFrogUser.setLastName("Doe");
-        superFrogUser.setAddress("123 Main St.");
-        superFrogUser.setEmail("johndoe@example.com");
-        superFrogUser.setId("johndoe");
-
-
-        UserSecurity userSecurity = new UserSecurity();
-        userSecurity.setEmail("johndoe@example.com");
-        userSecurity.setPassword("password");
-        userSecurity.setRoles("user");
-        userSecurity.setUser(superFrogUser);
-
-        userSecurity.setUser(superFrogUser);
-        superFrogUser.setUserSecurity(userSecurity);
-        userRepository.save(superFrogUser);
-
-
-
 //        this.requestRepository.saveAll(requests);
 
         // For Reports
@@ -206,9 +197,9 @@ public class DBDataInitializer implements CommandLineRunner {
             superFrogUser.setPaymentPreference(PaymentPreference.MAIL_CHECK);
             superFrogUser.setRequests(createRequestsWithDifferentStatus());
             superFrogUser.getRequests().forEach(request -> request.setSuperFrogUser(superFrogUser));
-            UserSecurity.createUserSecurity(superFrogUser);
 
-
+            UserSecurity userSecurity = UserSecurity.createUserSecurity(superFrogUser);
+            this.userSecurityService.createBasicCredentials(userSecurity);
 
             users.add(superFrogUser);
         }
