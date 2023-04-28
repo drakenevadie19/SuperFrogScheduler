@@ -2,11 +2,18 @@ package edu.tcu.cs.superfrogscheduler.request.converter;
 
 import edu.tcu.cs.superfrogscheduler.request.dto.RequestDto;
 import edu.tcu.cs.superfrogscheduler.request.Request;
-import org.springframework.core.convert.converter.Converter;
+import edu.tcu.cs.superfrogscheduler.user.converter.user_to_dto.SuperFrogUserToUserDto;
 import org.springframework.stereotype.Component;
+import org.springframework.core.convert.converter.Converter;
 
 @Component
 public class RequestToRequestDtoConverter implements Converter<Request, RequestDto> {
+
+    private final SuperFrogUserToUserDto superFrogUserToUserDto;
+    public RequestToRequestDtoConverter(SuperFrogUserToUserDto superFrogUserToUserDto) {
+        this.superFrogUserToUserDto = superFrogUserToUserDto;
+    }
+
 
     @Override
     public RequestDto convert(Request source) {
@@ -23,7 +30,7 @@ public class RequestToRequestDtoConverter implements Converter<Request, RequestD
                 source.getCustomerLastName(),
                 source.getCustomerPhoneNumber(),
                 source.getCustomerEmail(),
-                source.getAssignedSuperFrogStudent(),
+                source.getAssignedSuperFrogStudent() != null ? this.superFrogUserToUserDto.convert(source.getSuperFrogUser()):null,   //this.converter.toUserDto(source.getAssignedSuperFrogStudent()):null)
                 source.getEventDescription(),
                 source.getRequestStatus()
         );

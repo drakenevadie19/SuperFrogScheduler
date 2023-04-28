@@ -5,6 +5,10 @@ import edu.tcu.cs.superfrogscheduler.request.converter.RequestToRequestDtoConver
 import edu.tcu.cs.superfrogscheduler.request.dto.RequestDto;
 import edu.tcu.cs.superfrogscheduler.system.Result;
 import edu.tcu.cs.superfrogscheduler.system.StatusCode;
+import edu.tcu.cs.superfrogscheduler.user.converter.Converter;
+import edu.tcu.cs.superfrogscheduler.user.converter.dto_to_user.UserDtoToSuperFrogUser;
+import edu.tcu.cs.superfrogscheduler.user.dto.UserDto;
+import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,18 +17,24 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("${api.endpoint.base-url}/requests")
+@CrossOrigin(origins = "http://localhost:5173")
 public class RequestController {
 
 
     private final RequestService requestService;
     private final RequestToRequestDtoConverter requestToRequestDtoConverter;
+    private final Converter converter;
 
     private final RequestDtoToRequestConverter requestDtoToRequestConverter;
 
-    public RequestController(RequestService requestService, RequestToRequestDtoConverter requestToRequestDtoConverter, RequestDtoToRequestConverter requestDtoToRequestConverter) {
+    private final UserDtoToSuperFrogUser userDtoToSuperFrogUser;
+
+    public RequestController(RequestService requestService, RequestToRequestDtoConverter requestToRequestDtoConverter, Converter converter, RequestDtoToRequestConverter requestDtoToRequestConverter, UserDtoToSuperFrogUser userDtoToSuperFrogUser) {
         this.requestService = requestService;
         this.requestToRequestDtoConverter = requestToRequestDtoConverter;
+        this.converter = converter;
         this.requestDtoToRequestConverter = requestDtoToRequestConverter;
+        this.userDtoToSuperFrogUser = userDtoToSuperFrogUser;
     }
 
     // UC 6, Get list of all appearances
@@ -61,31 +71,38 @@ public class RequestController {
     }
 
 
-
     //UC 22, SuperFrog Student signs up for an appearance
-    @PostMapping("/{id}/signup")
-    public Result signUpForRequest(@PathVariable String id, @RequestBody String superFrogId){
+
+    @PutMapping("/{requestId}/signup/{superFrogId}")
+    public Result signUpForRequest(@PathVariable String requestId, @PathVariable String superFrogId){//@RequestBody SuperFrogUser superFrogUser){
         // Authenticate the superfrog somehow
 
 
-        Request signedUpRequest = this.requestService.signupForRequest(id, superFrogId);
+        Request signedUpRequest = this.requestService.signupForRequest(requestId, superFrogId);
         RequestDto signedUpRequestDto = this.requestToRequestDtoConverter.convert(signedUpRequest);
         return new Result(true, StatusCode.SUCCESS, "Sign Up Success", signedUpRequestDto);
     }
 
+
+
+
     //UC 23, SuperFrog Student cancels a signs up appearance
-    @DeleteMapping("/{id}/signup")
-    public Result cancelSignUpForRequest(@PathVariable String id, @RequestBody String superFrogId){
+    @DeleteMapping("/{requestId}/signup/{superFrogId}")
+    //@PutMapping("/{requestId}/signup/{superFrogId}")
+    public Result cancelSignUpForRequest(@PathVariable String requestId, @PathVariable String superFrogId){
         // Authenticate the superfrog somehow
-        Request canceledSignUpRequest = this.requestService.cancelSignupForRequest(id, superFrogId);
+
+        Request canceledSignUpRequest = this.requestService.cancelSignupForRequest(requestId, superFrogId);
         RequestDto canceledSignUpRequestDto = this.requestToRequestDtoConverter.convert(canceledSignUpRequest);
         return new Result(true, StatusCode.SUCCESS, "Cancel Sign Up Success", canceledSignUpRequestDto);
     }
 
-    @PutMapping("/{id}/completed")
-    public Result markRequestAsCompleted(@PathVariable String id, @RequestBody String superFrogId){ //UC 24, SuperFrog Student marks an appearance as completed
+    @PutMapping("/{requestId}/completed/{superFrogId}")
+    public Result markRequestAsCompleted(@PathVariable String requestId, @PathVariable String superFrogId){//@RequestBody UserDto userDto){//@RequestBody String superFrogId){ //UC 24, SuperFrog Student marks an appearance as completed
 
-        Request completedRequest = this.requestService.markRequestAsCompleted(id, superFrogId);
+        //SuperFrogUser superFrogUser = this.userDtoToSuperFrogUser.convert(userDto);
+
+        Request completedRequest = this.requestService.markRequestAsCompleted(requestId, superFrogId);
         RequestDto completedRequestDto = this.requestToRequestDtoConverter.convert(completedRequest);
         return new Result(true, StatusCode.SUCCESS, "Mark as Completed Success", completedRequestDto);
 
