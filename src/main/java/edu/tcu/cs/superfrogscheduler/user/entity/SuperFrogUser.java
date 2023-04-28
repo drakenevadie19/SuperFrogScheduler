@@ -55,6 +55,7 @@ public class SuperFrogUser implements Serializable {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.email = firstName + lastName + "@tcu.edu";
     }
 
     public String getId() {

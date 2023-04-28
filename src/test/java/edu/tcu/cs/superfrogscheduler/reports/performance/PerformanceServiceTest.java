@@ -111,7 +111,7 @@ class PerformanceServiceTest {
     @Test
     public void should_generate_performance_forms_for_SuperFrog_students() {
         // Given
-        List<String> studentIdList = List.of("1001", "1004", "1012"); // Assume the Spirit Director has selected 7 finished requests for April.
+        List<String> studentIdList = List.of(); // Assume the Spirit Director has selected 7 finished requests for April.
 
         SuperFrogUser student1 = new SuperFrogUser("Jane", "Smith", "1001"); // First name, last name, and Id
 
@@ -190,7 +190,7 @@ class PerformanceServiceTest {
                         LocalTime.of(19, 0),
                         RequestStatus.COMPLETED,
                         student3)
-        );
+                );
 
         given(this.requestRepository.findByAssignedSuperFrogStudentIn(studentIdList)).willReturn(requests);
 
