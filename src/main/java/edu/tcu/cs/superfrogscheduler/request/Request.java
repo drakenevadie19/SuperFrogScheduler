@@ -1,6 +1,6 @@
 package edu.tcu.cs.superfrogscheduler.request;
 
-import edu.tcu.cs.superfrogscheduler.reports.EventType;
+import edu.tcu.cs.superfrogscheduler.reports.dto.EventType;
 import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
 import jakarta.persistence.*;
 
@@ -31,13 +31,6 @@ public class Request implements Serializable {
     private String eventTitle;
     private String eventDescription;
 
-    public String getEventDescription() {
-        return eventDescription;
-    }
-
-    public void setEventDescription(String eventDescription) {
-        this.eventDescription = eventDescription;
-    }
 
     private String customerFirstName;
 
@@ -48,17 +41,20 @@ public class Request implements Serializable {
 
     private RequestStatus requestStatus; //ENUM
 
+    //Setting assignedSuperFrog as String broke a RequestService and RequestDto
     private String assignedSuperFrogStudent;
 
     @ManyToOne
     private SuperFrogUser superFrogUser;
+
+
 
     // Constructors, getters, and setters
 
     public Request() {
     }
 
-    public Request(String id, EventType eventType, String address, Double mileage, LocalDate eventDate, LocalTime startTime, LocalTime endTime, RequestStatus requestStatus, String assignedSuperFrogStudent) {
+    public Request(String id, EventType eventType, String address, Double mileage, LocalDate eventDate, LocalTime startTime, LocalTime endTime, RequestStatus requestStatus, SuperFrogUser superFrogStudent) {
         this.id = id;
         this.address = address;
         this.eventType = eventType;
@@ -67,22 +63,11 @@ public class Request implements Serializable {
         this.endTime = endTime;
         this.mileage = mileage;
         this.requestStatus = requestStatus;
-        this.assignedSuperFrogStudent = assignedSuperFrogStudent;
+        this.superFrogUser = superFrogStudent;
+        this.assignedSuperFrogStudent = superFrogStudent.getId();
     }
 
-    //    public Request(Long id, LocalDate eventDate, String eventTitle, String customerFirstName,
-//                   String customerLastName, Integer customerPhoneNumber, String customerEmail,
-//                   RequestStatus requestStatus, String assignedSuperFrogStudent) {
-//        this.id = id;
-//        this.eventDate = eventDate;
-//        this.eventTitle = eventTitle;
-//        this.customerFirstName = customerFirstName;
-//        this.customerLastName = customerLastName;
-//        this.customerPhoneNumber = customerPhoneNumber;
-//        this.customerEmail = customerEmail;
-//        this.requestStatus = requestStatus;
-//        this.assignedSuperFrogStudent = assignedSuperFrogStudent;
-//    }
+
 
     //This is what gets passed
 
@@ -111,6 +96,15 @@ public class Request implements Serializable {
     public void setEventDate(LocalDate eventDate) {
         this.eventDate = eventDate;
     }
+
+    public String getEventDescription() {
+        return eventDescription;
+    }
+
+    public void setEventDescription(String eventDescription) {
+        this.eventDescription = eventDescription;
+    }
+
 
     public String getEventTitle() {
         return eventTitle;
@@ -145,11 +139,12 @@ public class Request implements Serializable {
     }
 
     public String getAssignedSuperFrogStudent() {
+
         return assignedSuperFrogStudent;
     }
 
-    public void setAssignedSuperFrogStudent(String assignedSuperFrogStudent) {
-        this.assignedSuperFrogStudent = assignedSuperFrogStudent;
+    public String setAssignedSuperFrogStudent(String assignedSuperFrogStudent) {
+        return this.assignedSuperFrogStudent = assignedSuperFrogStudent;
     }
 
 
@@ -211,5 +206,6 @@ public class Request implements Serializable {
     public void setSuperFrogUser(SuperFrogUser superFrogUser) {
         this.superFrogUser = superFrogUser;
     }
+
 }
 
