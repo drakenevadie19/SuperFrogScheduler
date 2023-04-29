@@ -4,14 +4,28 @@ spring:
     username: sa
     password:
     driver-class-name: org.h2.Driver
-#    url: jdbc:mysql://demo-db.cogo0zbjthrm.us-east-2.rds.amazonaws.com:3306/demo-db/?createDatabaseIfNotExist=true
-#    username: admin
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    password: password
   jpa:
     show-sql: true
     hibernate:
       ddl-auto: create
+
+
+  #setup email config
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username:
+#    password will be set to env file when deploy for security
+    password:
+    properties:
+      mail:
+        transport:
+          protocol: smtp
+        debug: true
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 api:
   endpoint:

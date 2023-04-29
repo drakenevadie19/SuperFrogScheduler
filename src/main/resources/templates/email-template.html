@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Welcome to the team!</title>
+</head>
+<body>
+<p>Dear <strong th:text="${name}"></strong>,</p>
+<p>Your account has been created successfully. Please log in to your account using the provided credentials and change
+    your password as soon as possible:</p>
+<p>Username: <strong th:text="${username}"></strong></p>
+<p>Password: <strong th:text="${password}"></strong></p>
+<p>If you have any questions or concerns, please contact us at support@superfrog.com.</p>
+
+<div>
+    <p>Best regards,</p>
+    <em>Super Frog Team</em>
+</div>
+
+</body>
+</html>

@@ -55,6 +55,7 @@ public class DBDataInitializer implements CommandLineRunner {
         admin.setLastName("adminLastName");
         admin.setPaymentPreference(PaymentPreference.MAIL_CHECK);
         UserSecurity userSecurity = UserSecurity.createUserSecurity(admin);
+        userSecurity.setPassword("adminPassword");
         this.userSecurityService.createBasicCredentials(userSecurity);
         userSecurity.setRoles("user admin");
         this.userRepository.save(admin);
@@ -199,6 +200,7 @@ public class DBDataInitializer implements CommandLineRunner {
             superFrogUser.getRequests().forEach(request -> request.setSuperFrogUser(superFrogUser));
 
             UserSecurity userSecurity = UserSecurity.createUserSecurity(superFrogUser);
+            userSecurity.setPassword("userPassword");
             this.userSecurityService.createBasicCredentials(userSecurity);
 
             users.add(superFrogUser);
