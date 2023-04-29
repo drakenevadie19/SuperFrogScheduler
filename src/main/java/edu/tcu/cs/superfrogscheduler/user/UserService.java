@@ -48,8 +48,8 @@ public class UserService {
         if (this.userRepository.findByEmail(superFrogUser.getEmail()).isPresent()) {
             throw new ObjectAlreadyExistedException("user", superFrogUser.getEmail());
         }
-        // createUserSecurity will also create 2-way connection between user and userSecurity
-        this.userSecurityService.createUserSecurity(superFrogUser);
+//        // createUserSecurity will also create 2-way connection between user and userSecurity
+//        this.userSecurityService.createUserSecurity(superFrogUser);
 
         return this.userRepository.save(superFrogUser);
     }

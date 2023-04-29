@@ -3,6 +3,7 @@ package edu.tcu.cs.superfrogscheduler.system.exception;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import edu.tcu.cs.superfrogscheduler.system.Result;
 import edu.tcu.cs.superfrogscheduler.system.StatusCode;
+import jakarta.mail.MessagingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
@@ -134,13 +135,17 @@ public class ExceptionHandlerAdvice {
      * @return
      */
 
+    @ExceptionHandler(MessagingException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Result handleMessagingException(MessagingException ex) {
+        return new Result(false, StatusCode.INTERNAL_SERVER_ERROR, "An error occurred while sending email, please try again", ex.getMessage());
+    }
+
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     Result handleOtherException(Exception ex) {
         return new Result(false, StatusCode.INTERNAL_SERVER_ERROR, "A server internal error occurs.", ex.getMessage());
     }
-
-
-
 
 }

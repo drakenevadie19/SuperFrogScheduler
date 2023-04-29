@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.util.Pair;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -69,19 +70,22 @@ class UserSecurityServiceTest {
         superFrogUser.setEmail("test@tcu.edu");
         superFrogUser.setUserSecurity(userSecurity);
 
-        given(this.userSecurityRepository.save(Mockito.any(UserSecurity.class)))
-                .willReturn(userSecurity);
+        given(this.passwordEncoder.encode(Mockito.any(String.class))).willReturn("hashedRandomPassword");
 
         // when
-        UserSecurity savedUserSecurity = this.userSecurityService.createUserSecurity(superFrogUser);
+        Pair<UserSecurity, String> userSecurityWithPassword = this.userSecurityService.createUserSecurity(superFrogUser);
+        UserSecurity savedUserSecurity = userSecurityWithPassword.getFirst();
+        String plainPassword = userSecurityWithPassword.getSecond();
 
         // then
         assertThat(savedUserSecurity.getPassword()).isNotEmpty();
-        assertThat(savedUserSecurity.getId()).isNotEmpty();
         assertThat(savedUserSecurity.getUser()).isEqualTo(superFrogUser);
         assertThat(savedUserSecurity.getEmail()).isEqualTo(superFrogUser.getEmail());
+        assertThat(plainPassword).isNotEqualTo(userSecurity.getPassword());
 
-        verify(this.userSecurityRepository, times(1)).save(Mockito.any(UserSecurity.class));
+        // save will not be called by UserSecurityService
+        // userSecurity will be automatically saved as SuperFrogUser entity use cascade merge
+        verify(this.userSecurityRepository, times(0)).save(Mockito.any(UserSecurity.class));
 
     }
 

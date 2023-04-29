@@ -1,5 +1,6 @@
 package edu.tcu.cs.superfrogscheduler.user;
 
+import edu.tcu.cs.superfrogscheduler.notification.MailService;
 import edu.tcu.cs.superfrogscheduler.security.auth.AuthService;
 import edu.tcu.cs.superfrogscheduler.system.utils.BaseSearchDtoToPagination;
 import edu.tcu.cs.superfrogscheduler.system.utils.Pagination;
@@ -12,14 +13,17 @@ import edu.tcu.cs.superfrogscheduler.user.dto.UserSearchDto;
 import edu.tcu.cs.superfrogscheduler.user.dto.UserWorkDetailsDto;
 import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
 import edu.tcu.cs.superfrogscheduler.user.entity.utils.SuperFrogUserSpecification;
+import edu.tcu.cs.superfrogscheduler.user.security.UserSecurity;
+import edu.tcu.cs.superfrogscheduler.user.security.UserSecurityService;
+import jakarta.mail.MessagingException;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.data.util.Pair;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
 
 @RestController
@@ -27,15 +31,26 @@ import java.util.Objects;
 public class UserController {
     private final UserService userService;
 
+    private final UserSecurityService userSecurityService;
+
     private final AuthService authService;
+
+    private final MailService mailService;
 
     private final BaseSearchDtoToPagination baseSearchDtoToPagination;
 
     private final Converter converter;
 
-    public UserController(UserService userService, AuthService authService, BaseSearchDtoToPagination baseSearchDtoToPagination, Converter converter) {
+    public UserController(UserService userService,
+                          UserSecurityService userSecurityService,
+                          AuthService authService,
+                          MailService mailService,
+                          BaseSearchDtoToPagination baseSearchDtoToPagination,
+                          Converter converter) {
         this.userService = userService;
+        this.userSecurityService = userSecurityService;
         this.authService = authService;
+        this.mailService = mailService;
         this.baseSearchDtoToPagination = baseSearchDtoToPagination;
         this.converter = converter;
     }
@@ -75,12 +90,19 @@ public class UserController {
 
     // UC 13: Spirit Director creates account for a new SuperFrog Student
     @PostMapping
-    public Result createAccount(@Valid @RequestBody UserDto userDto) {
+    @Transactional
+    public Result createAccount(@Valid @RequestBody UserDto userDto) throws MessagingException {
         SuperFrogUser superFrogUser = this.converter.toSuperFrogUser(userDto);
+
+        // createUserSecurity will also create 2-way connection between user and userSecurity
+        // it returns the userSecurity, together with the random but plain password
+        Pair<UserSecurity, String> userSecurityWithPassword = this.userSecurityService.createUserSecurity(superFrogUser);
 
         SuperFrogUser savedSuperFrogUser = this.userService.createUser(superFrogUser);
 
         UserDto savedUserDto = this.converter.toUserDto(savedSuperFrogUser);
+
+        mailService.sendCreateAccountMail(savedSuperFrogUser.getFirstName(), savedSuperFrogUser.getEmail(), userSecurityWithPassword.getSecond());
 
         return new Result(true, StatusCode.SUCCESS, "Create user Success", savedUserDto);
     }
