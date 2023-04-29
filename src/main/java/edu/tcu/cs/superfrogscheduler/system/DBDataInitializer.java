@@ -17,6 +17,7 @@ import edu.tcu.cs.superfrogscheduler.user.security.UserSecurityRepository;
 import edu.tcu.cs.superfrogscheduler.user.entity.SuperFrogUser;
 import edu.tcu.cs.superfrogscheduler.user.UserRepository;
 import edu.tcu.cs.superfrogscheduler.user.security.UserSecurityService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +25,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Random;
 
 @Component
 public class DBDataInitializer implements CommandLineRunner {
@@ -38,6 +41,9 @@ public class DBDataInitializer implements CommandLineRunner {
 
     private final RequestRepository requestRepository;
 
+    @Value("${server.environment}")
+    private String serverEnvironment;
+
     public DBDataInitializer(UserSecurityRepository userSecurityRepository, UserRepository userRepository, UserSecurityService userSecurityService, RequestRepository requestRepository, PerformanceFormRepository performanceFormRepository) {
         this.userSecurityRepository = userSecurityRepository;
         this.userRepository = userRepository;
@@ -48,11 +54,16 @@ public class DBDataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        System.out.println(serverEnvironment);
+        if(Objects.equals(serverEnvironment, "prod")) {
+            return;
+        }
+
         SuperFrogUser admin = new SuperFrogUser();
         admin.setAddress("adminAddress");
         admin.setEmail("admin@tcu.edu");
-        admin.setFirstName("adminFirstName");
-        admin.setLastName("adminLastName");
+        admin.setFirstName("SuperFrog");
+        admin.setLastName("Admin");
         admin.setPaymentPreference(PaymentPreference.MAIL_CHECK);
         UserSecurity userSecurity = UserSecurity.createUserSecurity(admin);
         userSecurity.setPassword("adminPassword");
@@ -92,15 +103,12 @@ public class DBDataInitializer implements CommandLineRunner {
         SuperFrogUser student1 = new SuperFrogUser("Jane", "Smith", "1001");
         SuperFrogUser student2 = new SuperFrogUser("John", "Doe", "1004");
         SuperFrogUser student3 = new SuperFrogUser("Tim", "Johnson", "1012");
-
         UserSecurity.createUserSecurity(student1);
         UserSecurity.createUserSecurity(student2);
         UserSecurity.createUserSecurity(student3);
-
         this.userRepository.save(student1);
         this.userRepository.save(student2);
         this.userRepository.save(student3);
-
         Request request1 = new Request(
                 "5",
                 EventType.TCU,
@@ -171,7 +179,6 @@ public class DBDataInitializer implements CommandLineRunner {
                 LocalTime.of(19, 0),
                 RequestStatus.COMPLETED,
                 student3);
-
         this.requestRepository.save(request1);
         this.requestRepository.save(request2);
         this.requestRepository.save(request3);
@@ -179,7 +186,6 @@ public class DBDataInitializer implements CommandLineRunner {
         this.requestRepository.save(request5);
         this.requestRepository.save(request6);
         this.requestRepository.save(request7);
-
  */
 
     }
@@ -187,13 +193,20 @@ public class DBDataInitializer implements CommandLineRunner {
 
     private List<SuperFrogUser> createUsers(int totalUser) {
         List<SuperFrogUser> users = new ArrayList<>();
+        String[] firstNames = {"John", "Jane", "Michael", "Emily", "David", "Sarah", "William", "Elizabeth", "Christopher", "Olivia", "Drake", "Hiep", "Vinh"};
+        String[] lastNames = {"Smith", "Johnson", "Williams", "Jones", "Brown", "Davis", "Miller", "Wilson", "Moore", "Taylor", "Do", "Nguyen", "Ly"};
+        Random random = new Random();
 
-        for(int i = 0; i < totalUser; i++) {
+        for(int i = 1; i <= totalUser; i++) {
             SuperFrogUser superFrogUser = new SuperFrogUser();
-            superFrogUser.setAddress("TCU CS" + i);
-            superFrogUser.setEmail("test" + i + "@tcu.edu");
-            superFrogUser.setFirstName("firstName");
-            superFrogUser.setLastName("lastName" + i);
+            superFrogUser.setAddress(i+ " Main St, Suite " + i + ", Fort Worth, TX, 76109");
+
+            String randFirstName  = firstNames[random.nextInt(firstNames.length)];
+            String randLastName  = lastNames[random.nextInt(lastNames.length)];
+
+            superFrogUser.setEmail(randFirstName.toLowerCase() + randLastName.toLowerCase() + i + "@tcu.edu");
+            superFrogUser.setFirstName(randFirstName);
+            superFrogUser.setLastName(randLastName);
 
             superFrogUser.setPaymentPreference(PaymentPreference.MAIL_CHECK);
             superFrogUser.setRequests(createRequestsWithDifferentStatus());

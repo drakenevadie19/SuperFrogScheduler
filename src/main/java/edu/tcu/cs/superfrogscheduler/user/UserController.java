@@ -16,12 +16,12 @@ import edu.tcu.cs.superfrogscheduler.user.entity.utils.SuperFrogUserSpecificatio
 import edu.tcu.cs.superfrogscheduler.user.security.UserSecurity;
 import edu.tcu.cs.superfrogscheduler.user.security.UserSecurityService;
 import jakarta.mail.MessagingException;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.util.Pair;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.thymeleaf.context.Context;
 
 import java.util.List;
 
@@ -90,6 +90,7 @@ public class UserController {
 
     // UC 13: Spirit Director creates account for a new SuperFrog Student
     @PostMapping
+    @Transactional
     public Result createAccount(@Valid @RequestBody UserDto userDto) throws MessagingException {
         SuperFrogUser superFrogUser = this.converter.toSuperFrogUser(userDto);
 
