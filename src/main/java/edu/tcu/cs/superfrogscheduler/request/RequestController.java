@@ -60,7 +60,7 @@ public class RequestController {
 
 
     //UC 4, update request status
-    @PutMapping("/{id}/status")
+    @PutMapping("/{id}/status/{status}")
     public Result updateRequestStatus(@PathVariable String id,@PathVariable RequestStatus status) {
 
         Request updatedRequest = this.requestService.updateStatus(id, status);
