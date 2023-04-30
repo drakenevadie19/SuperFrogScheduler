@@ -172,9 +172,10 @@ public class RequestService {
 
             //added, refactor
             updateRequest.setSuperFrogUser(null);
-            updateRequest.setRequestStatus(RequestStatus.APPROVED);
+            updateRequest.setRequestStatus(RequestStatus.CANCELLED);
 
-
+            //set the assigned SuperFrog to null and update
+            return update(requestId, updateRequest);
 
 
 
@@ -184,8 +185,8 @@ public class RequestService {
         }
 
 
-        return update(requestId, updateRequest);
-        //set the assigned SuperFrog to null and update
+
+
 
     }
 
@@ -202,7 +203,7 @@ public class RequestService {
         if (request.getAssignedSuperFrogStudent().equals(superFrogUser)) {
             request.setRequestStatus(RequestStatus.COMPLETED);
             //add this to super frogs completed appearances somehow
-
+            return update(requestId,request);
         }
         else {
             throw new ObjectAlreadyExistedException("Super Frog ",request.getSuperFrogUser().getId());//getAssignedSuperFrogStudent().getId());
@@ -210,7 +211,7 @@ public class RequestService {
 
         //set request to completed and update the status.
 
-        return update(requestId,request);
+
     }
 
 }
