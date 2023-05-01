@@ -11,7 +11,7 @@ public class Pagination {
 
     private static final int MAX_SIZE = 50;
 
-    private static final int MIN_SIZE = 20;
+    private static final int MIN_SIZE = 5;
 
     private int pageNumber;
 

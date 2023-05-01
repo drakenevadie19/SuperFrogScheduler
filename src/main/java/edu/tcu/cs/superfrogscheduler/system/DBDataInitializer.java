@@ -207,6 +207,7 @@ public class DBDataInitializer implements CommandLineRunner {
             superFrogUser.setEmail(randFirstName.toLowerCase() + randLastName.toLowerCase() + i + "@tcu.edu");
             superFrogUser.setFirstName(randFirstName);
             superFrogUser.setLastName(randLastName);
+            superFrogUser.setPhoneNumber("(817) 567-9999");
 
             superFrogUser.setPaymentPreference(PaymentPreference.MAIL_CHECK);
             superFrogUser.setRequests(createRequestsWithDifferentStatus());
