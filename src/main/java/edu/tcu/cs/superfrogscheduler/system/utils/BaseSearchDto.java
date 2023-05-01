@@ -19,7 +19,7 @@ public class BaseSearchDto {
     private Integer pageNumber = 0;
 
     @NotNull
-    private Integer pageSize = 20;
+    private Integer pageSize = 5;
 
     public String getSortBy() {
         return sortBy;
