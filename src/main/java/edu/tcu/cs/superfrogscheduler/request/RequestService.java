@@ -157,37 +157,25 @@ public class RequestService {
 
 
     //UC 23: allows SuperFrog students to cancel their sign-up for a specific appearance request.
-    public Request cancelSignupForRequest(String requestId, String superFrogId){
-
-
-        Request updateRequest = getRequestById(requestId); // grab the request @ id
+    public Request cancelSignupForRequest(String requestId, String superFrogId) {
+        // Get the request and the SuperFrogUser by their IDs
+        Request updateRequest = getRequestById(requestId);
         SuperFrogUser superFrogUser = this.userService.findUserById(superFrogId);
 
 
-
-        // check if assignedSuperFrogStudent field matches the passed superFrogId
-        if (updateRequest.getAssignedSuperFrogStudent().equals(superFrogUser)) {
-            // set the assigned SuperFrog to null and update
+        if (updateRequest.getAssignedSuperFrogStudent() != null ) {
+            // If they match, cancel the request by setting the assigned SuperFrogUser to null,
+            // updating the request status, and updating the request in the database
             updateRequest.setAssignedSuperFrogStudent(null);
-
-            //added, refactor
             updateRequest.setSuperFrogUser(null);
-            updateRequest.setRequestStatus(RequestStatus.APPROVED);
-
-
-
-
-
+            updateRequest.setRequestStatus(RequestStatus.CANCELLED);
+            return update(requestId, updateRequest);
+        } else {
+            // If they don't match, throw an exception indicating that the SuperFrogUser is not assigned to the request
+            throw new ObjectAlreadyExistedException("Super Frog ", superFrogUser.getId());
         }
-        else {
-            throw new ObjectAlreadyExistedException("Super Frog ",updateRequest.getSuperFrogUser().getId()); //changed from getAssignedSuperFrogUser.getId
-        }
-
-
-        return update(requestId, updateRequest);
-        //set the assigned SuperFrog to null and update
-
     }
+
 
 
 
@@ -202,7 +190,7 @@ public class RequestService {
         if (request.getAssignedSuperFrogStudent().equals(superFrogUser)) {
             request.setRequestStatus(RequestStatus.COMPLETED);
             //add this to super frogs completed appearances somehow
-
+            return update(requestId,request);
         }
         else {
             throw new ObjectAlreadyExistedException("Super Frog ",request.getSuperFrogUser().getId());//getAssignedSuperFrogStudent().getId());
@@ -210,7 +198,7 @@ public class RequestService {
 
         //set request to completed and update the status.
 
-        return update(requestId,request);
+
     }
 
 }

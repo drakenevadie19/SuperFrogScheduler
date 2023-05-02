@@ -87,7 +87,7 @@ public class RequestController {
 
 
     //UC 23, SuperFrog Student cancels a signs up appearance
-    @DeleteMapping("/{requestId}/signup/{superFrogId}")
+    @DeleteMapping("/{requestId}/cancel/{superFrogId}")
     //@PutMapping("/{requestId}/signup/{superFrogId}")
     public Result cancelSignUpForRequest(@PathVariable String requestId, @PathVariable String superFrogId){
         // Authenticate the superfrog somehow
