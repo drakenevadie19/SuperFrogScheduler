@@ -1,14 +1,13 @@
 package edu.tcu.cs.superfrogscheduler.system;
 
-import edu.tcu.cs.superfrogscheduler.reports.dto.EventType;
 import edu.tcu.cs.superfrogscheduler.reports.dto.Period;
+import edu.tcu.cs.superfrogscheduler.reports.entity.PaymentForm;
 import edu.tcu.cs.superfrogscheduler.reports.entity.PerformanceForm;
+import edu.tcu.cs.superfrogscheduler.reports.repository.PaymentFormRepository;
 import edu.tcu.cs.superfrogscheduler.reports.repository.PerformanceFormRepository;
 import edu.tcu.cs.superfrogscheduler.request.Request;
 import edu.tcu.cs.superfrogscheduler.request.RequestRepository;
 import edu.tcu.cs.superfrogscheduler.request.RequestStatus;
-
-import edu.tcu.cs.superfrogscheduler.user.UserService;
 
 import edu.tcu.cs.superfrogscheduler.user.entity.utils.PaymentPreference;
 
@@ -21,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -39,17 +39,20 @@ public class DBDataInitializer implements CommandLineRunner {
 
     private final PerformanceFormRepository performanceFormRepository;
 
+    private final PaymentFormRepository paymentFormRepository;
+
     private final RequestRepository requestRepository;
 
     @Value("${server.environment}")
     private String serverEnvironment;
 
-    public DBDataInitializer(UserSecurityRepository userSecurityRepository, UserRepository userRepository, UserSecurityService userSecurityService, RequestRepository requestRepository, PerformanceFormRepository performanceFormRepository) {
+    public DBDataInitializer(UserSecurityRepository userSecurityRepository, UserRepository userRepository, UserSecurityService userSecurityService, RequestRepository requestRepository, PerformanceFormRepository performanceFormRepository, PaymentFormRepository paymentFormRepository) {
         this.userSecurityRepository = userSecurityRepository;
         this.userRepository = userRepository;
         this.userSecurityService = userSecurityService;
         this.performanceFormRepository = performanceFormRepository;
         this.requestRepository = requestRepository;
+        this.paymentFormRepository = paymentFormRepository;
     }
 
     @Override
@@ -78,6 +81,27 @@ public class DBDataInitializer implements CommandLineRunner {
 //        this.requestRepository.saveAll(requests);
 
         // For Reports
+
+        Period period3 = new Period(LocalDate.of(2023, 4, 1), LocalDate.of(2023, 4, 30));
+        PaymentForm paymentForm1 = new PaymentForm(
+                "John",
+                "Doe",
+                "123",
+                period3,
+                BigDecimal.valueOf(900.75)
+        );
+
+        Period period4 = new Period(LocalDate.of(2023, 2, 1), LocalDate.of(2023, 2, 28));
+        PaymentForm paymentForm2 = new PaymentForm(
+                "Susan",
+                "Doe",
+                "124",
+                period4,
+                BigDecimal.valueOf(900.75)
+        );
+
+        this.paymentFormRepository.save(paymentForm1);
+        this.paymentFormRepository.save(paymentForm2);
 
         Period period1 = new Period(LocalDate.of(2023, 4, 1), LocalDate.of(2023, 4, 30));
         PerformanceForm performanceForm1 = new PerformanceForm(
