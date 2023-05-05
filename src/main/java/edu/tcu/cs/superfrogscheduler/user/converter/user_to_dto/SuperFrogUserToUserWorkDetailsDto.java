@@ -35,7 +35,7 @@ public class SuperFrogUserToUserWorkDetailsDto implements Converter<SuperFrogUse
         List<RequestDto> completedAppearances = requestStatusListMap.get(RequestStatus.COMPLETED);
 
         return new UserWorkDetailsDto(source.getId(), source.getUserSecurity().getRoles(), source.getFirstName(), source.getLastName(), source.getPhoneNumber(),
-                source.getAddress(), source.getEmail(),null, signedUpAppearances, completedAppearances);
+                source.getAddress(), source.getEmail(),null, source.getIsInternationalStudent(), source.getPaymentPreference(), signedUpAppearances, completedAppearances);
     }
 
 }
