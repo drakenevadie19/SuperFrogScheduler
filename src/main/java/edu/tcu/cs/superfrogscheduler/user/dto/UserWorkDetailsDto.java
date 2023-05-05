@@ -1,6 +1,7 @@
 package edu.tcu.cs.superfrogscheduler.user.dto;
 
 import edu.tcu.cs.superfrogscheduler.request.dto.RequestDto;
+import edu.tcu.cs.superfrogscheduler.user.entity.utils.PaymentPreference;
 
 import java.util.List;
 
@@ -21,6 +22,10 @@ public record UserWorkDetailsDto(
         String email,
 
         String personalSchedules,
+
+        Boolean isInternational,
+
+        PaymentPreference paymentPreference,
 
         List<RequestDto> signedUpAppearances,
 
